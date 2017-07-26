@@ -19,7 +19,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan({ "com.baeldung.um.persistence" })
+@ComponentScan({ "com.maurofokker.um.persistence" })
 @PropertySource({ "classpath:persistence-${persistenceTarget:h2}.properties" })
 @EnableJpaRepositories(basePackages = "com.baeldung.um.persistence.dao")
 public class UmPersistenceJpaConfig {
@@ -37,7 +37,7 @@ public class UmPersistenceJpaConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[] { "com.baeldung.um" });
+        em.setPackagesToScan(new String[] { "com.maurofokker.um" });
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(additionalProperties());

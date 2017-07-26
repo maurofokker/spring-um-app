@@ -1,10 +1,10 @@
-package com.maurofokker.um.controller;
+package com.maurofokker.um.web.controller;
 
 import com.maurofokker.common.util.QueryConstants;
 import com.maurofokker.common.web.controller.AbstractController;
 import com.maurofokker.common.web.controller.ISortingController;
-import com.maurofokker.um.persistence.model.Role;
-import com.maurofokker.um.service.IRoleService;
+import com.maurofokker.um.persistence.model.Privilege;
+import com.maurofokker.um.service.IPrivilegeService;
 import com.maurofokker.um.util.UmMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,14 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = UmMappings.ROLES)
-public class RoleController extends AbstractController<Role> implements ISortingController<Role> {
+@RequestMapping(value = UmMappings.PRIVILEGES)
+public class PrivilegeController extends AbstractController<Privilege> implements ISortingController<Privilege> {
 
     @Autowired
-    private IRoleService service;
+    private IPrivilegeService service;
 
-    public RoleController() {
-        super(Role.class);
+    public PrivilegeController() {
+        super(Privilege.class);
     }
 
     // API
@@ -32,29 +32,29 @@ public class RoleController extends AbstractController<Role> implements ISorting
     @Override
     @RequestMapping(params = { QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT_BY }, method = RequestMethod.GET)
     @ResponseBody
-    public List<Role> findAllPaginatedAndSorted(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size, @RequestParam(value = QueryConstants.SORT_BY) final String sortBy,
-                                                @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
+    public List<Privilege> findAllPaginatedAndSorted(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size, @RequestParam(value = QueryConstants.SORT_BY) final String sortBy,
+                                                     @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
         return findPaginatedAndSortedInternal(page, size, sortBy, sortOrder);
     }
 
     @Override
     @RequestMapping(params = { QueryConstants.PAGE, QueryConstants.SIZE }, method = RequestMethod.GET)
     @ResponseBody
-    public List<Role> findAllPaginated(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size) {
+    public List<Privilege> findAllPaginated(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size) {
         return findPaginatedInternal(page, size);
     }
 
     @Override
     @RequestMapping(params = { QueryConstants.SORT_BY }, method = RequestMethod.GET)
     @ResponseBody
-    public List<Role> findAllSorted(@RequestParam(value = QueryConstants.SORT_BY) final String sortBy, @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
+    public List<Privilege> findAllSorted(@RequestParam(value = QueryConstants.SORT_BY) final String sortBy, @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
         return findAllSortedInternal(sortBy, sortOrder);
     }
 
     @Override
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Role> findAll(final HttpServletRequest request) {
+    public List<Privilege> findAll(final HttpServletRequest request) {
         return findAllInternal(request);
     }
 
@@ -62,7 +62,7 @@ public class RoleController extends AbstractController<Role> implements ISorting
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Role findOne(@PathVariable("id") final Long id) {
+    public Privilege findOne(@PathVariable("id") final Long id) {
         return findOneInternal(id);
     }
 
@@ -70,7 +70,7 @@ public class RoleController extends AbstractController<Role> implements ISorting
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody final Role resource) {
+    public void create(@RequestBody final Privilege resource) {
         createInternal(resource);
     }
 
@@ -78,7 +78,7 @@ public class RoleController extends AbstractController<Role> implements ISorting
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable("id") final Long id, @RequestBody final Role resource) {
+    public void update(@PathVariable("id") final Long id, @RequestBody final Privilege resource) {
         updateInternal(id, resource);
     }
 
@@ -93,7 +93,7 @@ public class RoleController extends AbstractController<Role> implements ISorting
     // Spring
 
     @Override
-    protected final IRoleService getService() {
+    protected final IPrivilegeService getService() {
         return service;
     }
 

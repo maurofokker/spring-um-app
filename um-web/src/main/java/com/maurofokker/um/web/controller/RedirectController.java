@@ -1,4 +1,4 @@
-package com.maurofokker.um.controller;
+package com.maurofokker.um.web.controller;
 
 import com.maurofokker.um.util.UmMappings;
 import org.springframework.http.HttpHeaders;
