@@ -70,7 +70,6 @@
 				<artifactId>cargo-maven2-plugin</artifactId>
 				<version>${cargo-maven2-plugin.version}</version>
 				<configuration>
-					<wait>false</wait>
 					<container>
 						<containerId>tomcat8x</containerId>
 						<type>embedded</type>
@@ -81,7 +80,7 @@
 					</container>
 					<configuration>
 						<properties>
-							<cargo.servlet.port>8082</cargo.servlet.port>
+							<cargo.servlet.port>8085</cargo.servlet.port>
 						</properties>
 					</configuration>
 				</configuration>
