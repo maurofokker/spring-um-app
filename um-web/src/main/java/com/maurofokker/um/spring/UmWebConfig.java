@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Configuration
-@ComponentScan({ "com.maurofokker.um.web" })
+@ComponentScan({ "com.maurofokker.um.web", "com.maurofokker.common.web" })
 @EnableWebMvc
 public class UmWebConfig extends WebMvcConfigurerAdapter {
     /***
@@ -32,7 +32,7 @@ public class UmWebConfig extends WebMvcConfigurerAdapter {
     public void extendMessageConverters(final List<HttpMessageConverter<?>> converters) {
 
         // find jackson converter for marshalling and unmarshalling
-        /*
+
         Optional<HttpMessageConverter<?>> converterFound = converters.stream()
                 .filter(c -> c instanceof AbstractJackson2HttpMessageConverter).findFirst();
 
@@ -41,6 +41,6 @@ public class UmWebConfig extends WebMvcConfigurerAdapter {
             converter.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT); // pretty print output
             converter.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // not accept unknown props
         }
-        */
+
     }
 }

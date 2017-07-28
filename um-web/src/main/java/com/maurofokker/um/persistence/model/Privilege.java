@@ -5,6 +5,8 @@ import com.maurofokker.common.persistence.model.INameableEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -16,9 +18,11 @@ public class Privilege implements INameableEntity, INameableDto {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @Size(min = 2, max = 30)
+    @NotNull
     private String name;
 
-    @Column(unique = false, nullable = true)
+    @Column(unique = false, nullable = false)
     private String description;
 
     @JsonIgnore
