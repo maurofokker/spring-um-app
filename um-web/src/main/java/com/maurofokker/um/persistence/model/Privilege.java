@@ -22,7 +22,7 @@ public class Privilege implements INameableEntity, INameableDto {
     @NotNull
     private String name;
 
-    @Column(unique = false, nullable = true)
+    @Column(unique = false, nullable = false)
     private String description;
 
     @JsonIgnore
