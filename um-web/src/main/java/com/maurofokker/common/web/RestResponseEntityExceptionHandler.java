@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -38,6 +39,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), headers, HttpStatus.BAD_REQUEST, request);
     }
+
+    /**
+     * handle response to dealing with this method argument not valid exception
+     * i.e. a not null validation in a property
+     * should have @Valid in controller method
+     */
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers
+            , final HttpStatus status, final WebRequest request) {
+
+        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+
 
     /**
      * message method uses the HTTP status and the exception to create this API error data transfer object
