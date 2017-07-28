@@ -20,7 +20,8 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan({ "com.maurofokker.um.persistence" })
-@PropertySource({ "classpath:persistence-${persistenceTarget:h2}.properties" })
+//@PropertySource({ "classpath:persistence-${persistenceTarget:h2}.properties" })
+@PropertySource({ "classpath:persistence-${persistenceTarget:local}.properties" })
 @EnableJpaRepositories(basePackages = "com.maurofokker.um.persistence.dao")
 public class UmPersistenceJpaConfig {
 
