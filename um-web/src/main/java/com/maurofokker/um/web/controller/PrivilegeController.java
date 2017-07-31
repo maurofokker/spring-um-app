@@ -72,6 +72,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid final Privilege resource) {
+        // INFO: use of @Valid from JSR 349 for bean validation
         createInternal(resource);
     }
 
@@ -79,7 +80,8 @@ public class PrivilegeController extends AbstractController<Privilege> implement
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable("id") final Long id, @RequestBody final Privilege resource) {
+    public void update(@PathVariable("id") final Long id, @RequestBody @Valid final Privilege resource) {
+        // INFO: we could use @Validated from spring validation api that adds more features than JSR 349, i.e. validation groups
         updateInternal(id, resource);
     }
 

@@ -62,7 +62,7 @@
         </dependency>
 
         <!-- validation -->
-
+        <!-- JSR 303, JSR 349, Hibernate and javax.validation.Validator api-->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
