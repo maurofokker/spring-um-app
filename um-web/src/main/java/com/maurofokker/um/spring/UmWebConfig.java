@@ -52,4 +52,44 @@ public class UmWebConfig extends WebMvcConfigurerAdapter {
             converter.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // not accept unknown props
         }
     }
+
+    /*
+    Config Option 2
+
+    // beans
+
+    public XStreamMarshaller xstreamMarshaller() {
+        final XStreamMarshaller xStreamMarshaller = new XStreamMarshaller();
+        xStreamMarshaller.setAutodetectAnnotations(true);
+        xStreamMarshaller.setAnnotatedClasses(new Class[] { Principal.class, UserDto.class, Role.class, Privilege.class });
+        xStreamMarshaller.getXStream().addDefaultImplementation(java.sql.Timestamp.class, java.util.Date.class);
+
+        return xStreamMarshaller;
+    }
+
+    public MarshallingHttpMessageConverter marshallingHttpMessageConverter() {
+        final MarshallingHttpMessageConverter marshallingHttpMessageConverter = new MarshallingHttpMessageConverter();
+        final XStreamMarshaller xstreamMarshaller = xstreamMarshaller();
+        marshallingHttpMessageConverter.setMarshaller(xstreamMarshaller);
+        marshallingHttpMessageConverter.setUnmarshaller(xstreamMarshaller);
+
+        return marshallingHttpMessageConverter;
+    }
+
+    // template
+
+    @Override
+    public void configureMessageConverters(final List<HttpMessageConverter<?>> messageConverters) {
+        messageConverters.add(marshallingHttpMessageConverter());
+
+        final ClassLoader classLoader = getClass().getClassLoader();
+        if (ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader)) {
+            messageConverters.add(new MappingJackson2HttpMessageConverter());
+        }
+
+        super.configureMessageConverters(messageConverters);
+    }
+
+
+     */
 }

@@ -1,0 +1,48 @@
+package com.maurofokker.um.spring;
+
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by mgaldamesc on 01-08-2017.
+ */
+//@Configurarion
+public class UmServletConfig {
+
+    @Bean
+    public DispatcherServlet dispatcherServlet() {
+        return new DispatcherServlet();
+    }
+
+    // configuracion similar al web.xml
+    @Bean
+    public ServletRegistrationBean dispatcherServletRegistration() {
+        final ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/api/*");
+
+        final Map<String, String> params = new HashMap<String, String>();
+        params.put("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
+        params.put("contextConfigLocation", "org.spring.sec2.spring");
+        params.put("dispatchOptionsRequest", "true");
+        registration.setInitParameters(params);
+
+        registration.setLoadOnStartup(1);
+        return registration;
+    }
+
+    /* @Bean
+    @Order(1)
+    public FilterRegistrationBean springSecurityFilterChain() {
+        final FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
+        final DelegatingFilterProxy delegatingFilterProxy = new DelegatingFilterProxy();
+        filterRegBean.setFilter(delegatingFilterProxy);
+        final List<String> urlPatterns = new ArrayList<String>();
+        urlPatterns.add("/*");
+        filterRegBean.setUrlPatterns(urlPatterns);
+        return filterRegBean;
+    }*/
+
+}

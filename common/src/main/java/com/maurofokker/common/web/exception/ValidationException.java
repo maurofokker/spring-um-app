@@ -1,4 +1,4 @@
-package com.maurofokker.common.web.exceptions;
+package com.maurofokker.common.web.exception;
 
 /**
  * Thrown when validation conflict error is found. Message used to describe the validation error.

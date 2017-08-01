@@ -1,9 +1,11 @@
 package com.maurofokker.um.persistence.setup;
 
 import com.maurofokker.common.spring.util.Profiles;
+import com.maurofokker.um.persistence.model.Principal;
 import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.persistence.model.User;
+import com.maurofokker.um.service.IPrincipalService;
 import com.maurofokker.um.service.IPrivilegeService;
 import com.maurofokker.um.service.IRoleService;
 import com.maurofokker.um.service.IUserService;
@@ -27,7 +29,7 @@ import java.util.Set;
  * The main focus here is creating some standard privileges, then roles and finally some default principals/users
  */
 @Component
-@Profile(Profiles.PRODUCTION)
+@Profile(Profiles.DEPLOYED)
 public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent> {
     private final Logger logger = LoggerFactory.getLogger(SecuritySetup.class);
 
@@ -35,6 +37,9 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IPrincipalService principalService;
 
     @Autowired
     private IRoleService roleService;
@@ -131,6 +136,24 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
         if (entityByName == null) {
             final User entity = new User(loginName, pass, roles);
             userService.create(entity);
+        }
+    }
+
+    // Principal/User
+
+    final void createPrincipals() {
+        final Role roleAdmin = roleService.findByName(Roles.ROLE_ADMIN);
+        final Role roleUser = roleService.findByName(Roles.ROLE_USER);
+
+        createPrincipalIfNotExisting(Um.ADMIN_EMAIL, Um.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
+        createPrincipalIfNotExisting(Um.USER_EMAIL, Um.USER_PASS, Sets.<Role> newHashSet(roleUser));
+    }
+
+    final void createPrincipalIfNotExisting(final String loginName, final String pass, final Set<Role> roles) {
+        final Principal entityByName = principalService.findByName(loginName);
+        if (entityByName == null) {
+            final Principal entity = new Principal(loginName, pass, roles);
+            principalService.create(entity);
         }
     }
 

@@ -1,10 +1,10 @@
 package com.maurofokker.common.web;
 
 import com.maurofokker.common.persistence.exception.MyEntityNotFoundException;
-import com.maurofokker.common.web.exception.MyBadRequestException;
-import com.maurofokker.common.web.exception.MyConflictException;
-import com.maurofokker.common.web.exception.MyForbiddenException;
-import com.maurofokker.common.web.exception.MyPreconditionFailedException;
+import com.maurofokker.common.web.exception.*;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,41 +22,87 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    /**
+     * Extending the response entity exception handler for full control of status codes,
+     * and over the bodies of the responses sended to the client.
+     * This provide good, clean responses, helpful responses, and not an empty body
+     */
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     public RestResponseEntityExceptionHandler() {
         super();
     }
 
-    // API
+    // Clients error handle 4XX
 
-    // 400
+    /**
+     *  simple way of returning the response entity back to the client along with a lot of useful
+     *  or potentially useful information
+     */
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers
+            , final HttpStatus status, final WebRequest request) {
 
-    @ExceptionHandler({ ConstraintViolationException.class, MyBadRequestException.class, DataIntegrityViolationException.class })
-    public ResponseEntity<Object> handleBadRequest(final RuntimeException ex, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), headers, HttpStatus.BAD_REQUEST, request);
     }
 
+    /**
+     * handle response to dealing with this method argument not valid exception
+     * i.e. a not null validation in a property
+     * should have @Valid in controller method
+     */
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        // ex.getCause() instanceof JsonMappingException, JsonParseException // for additional information later on
-        return handleExceptionInternal(ex, bodyOfResponse, headers, HttpStatus.BAD_REQUEST, request);
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers
+            , final HttpStatus status, final WebRequest request) {
+        log.info("Bad Request: " + ex.getMessage());
+        log.debug("Bad Request: ", ex);
+
+        final BindingResult result = ex.getBindingResult();
+        final List<FieldError> fieldErrors = result.getFieldErrors();
+        final ValidationErrorDTO dto = processFieldErrors(fieldErrors);
+
+        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), headers, HttpStatus.BAD_REQUEST, request);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, headers, HttpStatus.BAD_REQUEST, request);
+    /**
+     * to handle validation exceptions i.e. data integrity in db (null not enable)
+     */
+    @ExceptionHandler(value = { DataIntegrityViolationException.class, MyBadRequestException.class, ConstraintViolationException.class})
+    public final ResponseEntity<Object> handleBadRequest(final RuntimeException ex, final WebRequest request) {
+        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    /**
+     * message method uses the HTTP status and the exception to create this API error data transfer object
+     */
+    private ApiError message(final HttpStatus httpStatus, final Exception ex) {
+        final String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+        final String devMessage = ExceptionUtils.getRootCauseMessage(ex);
+
+        return new ApiError(httpStatus.value(), message, devMessage);
+    }
+
+    private ValidationErrorDTO processFieldErrors(final List<FieldError> fieldErrors) {
+        final ValidationErrorDTO dto = new ValidationErrorDTO();
+
+        for (final FieldError fieldError : fieldErrors) {
+            final String localizedErrorMessage = fieldError.getDefaultMessage();
+            dto.addFieldError(fieldError.getField(), localizedErrorMessage);
+        }
+
+        return dto;
     }
 
     // 403
 
     @ExceptionHandler({ MyForbiddenException.class })
-    public ResponseEntity<Object> handleForbidden(final MyForbiddenException ex, final WebRequest request) {
+    protected ResponseEntity<Object> handleForbidden(final MyForbiddenException ex, final WebRequest request) {
         final String bodyOfResponse = "This should be application specific";
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
@@ -68,7 +116,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(value = { EntityNotFoundException.class })
-    protected ResponseEntity<Object> handleBadRequest(final EntityNotFoundException ex, final WebRequest request) {
+    protected ResponseEntity<Object> handleLibraryNotFound(final EntityNotFoundException ex, final WebRequest request) {
         final String bodyOfResponse = "This should be application specific";
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
@@ -81,16 +129,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    // 4xx
+    // 412
 
     @ExceptionHandler({ MyPreconditionFailedException.class })
-    /*412*/protected ResponseEntity<Object> handlePreconditionFailed(final RuntimeException ex, final WebRequest request) {
+    protected ResponseEntity<Object> handlePreconditionFailed(final RuntimeException ex, final WebRequest request) {
         final String bodyOfResponse = "This should be application specific";
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.PRECONDITION_FAILED, request);
     }
 
+    // 500
+
     @ExceptionHandler({ NullPointerException.class, IllegalArgumentException.class, IllegalStateException.class })
-    /*500*/public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
+    protected ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
         logger.error("500 Status Code", ex);
         final String bodyOfResponse = "This should be application specific";
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);

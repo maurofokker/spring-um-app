@@ -41,6 +41,7 @@
 
 		<!-- marshalling -->
 		<jaxb-api.version>2.2.12</jaxb-api.version>
+		<xstream.version>1.4.9</xstream.version>
 
 		<!-- maven plugins -->
 		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>

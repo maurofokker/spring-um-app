@@ -1,7 +1,11 @@
-package com.maurofokker.um.spring;
+package com.maurofokker.um.run;
 
+import com.maurofokker.um.persistence.setup.MyApplicationContextInitializer;
+import com.maurofokker.um.spring.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
@@ -15,47 +19,38 @@ import java.util.Map;
 /**
  * Created by mgaldamesc on 25-07-2017.
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = { // @formatter:off
+        SecurityAutoConfiguration.class,
+        ErrorMvcAutoConfiguration.class
+}) // @formatter:on
 @Import({ // @formatter:off
         UmContextConfig.class,
         UmPersistenceJpaConfig.class,
         UmServiceConfig.class,
-        UmWebConfig.class
+        UmWebConfig.class,
+        UmServletConfig.class,
+        UmJavaSecurityConfig.class
 }) // @formatter:on
 public class UmApp extends SpringBootServletInitializer {
     // SpringBootServletInitializer da la posibilidad de hacer deploy de la de forma tradicional
     // al deshacerse de web.xml
 
-    @Bean
-    public DispatcherServlet dispatcherServlet() {
-        return new DispatcherServlet();
-    }
-
-    // configuracion similar al web.xml
-    @Bean
-    public ServletRegistrationBean dispatcherServletRegistration() {
-        final ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/api/*");
-
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
-        params.put("contextConfigLocation", "org.spring.sec2.spring");
-        params.put("dispatchOptionsRequest", "true");
-        registration.setInitParameters(params);
-
-        registration.setLoadOnStartup(1);
-        return registration;
+    public UmApp() {
+        super();
     }
 
     // Trae toda la configuracion al cargar el UmApp que carga el resto de configuraciones
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder application) {
-        return application.sources(UmApp.class);
+        //return application.sources(UmApp.class);
+        return application.initializers(new MyApplicationContextInitializer()).sources(UmApp.class);
     }
 
     // metodo que corre toda la app
     // con esto se puede hacer deploy con Spring Boot o de forma normal en otro web server
     public static void main(final String... args) {
-        SpringApplication.run(UmApp.class, args);
+        //SpringApplication.run(UmApp.class, args);
+        new SpringApplicationBuilder(UmApp.class).initializers(new MyApplicationContextInitializer()).run(args);
     }
 
 }

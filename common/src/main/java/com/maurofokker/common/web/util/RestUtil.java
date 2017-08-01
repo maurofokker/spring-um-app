@@ -1,7 +1,7 @@
 package com.maurofokker.common.web.util;
 
 import com.maurofokker.common.web.exception.MyConflictException;
-import com.maurofokker.common.web.exceptions.ValidationException;
+import com.maurofokker.common.web.exception.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
