@@ -1,4 +1,4 @@
-package com.maurofokker.um.web.controller.dto;
+package com.maurofokker.um.web.dto;
 
 import com.maurofokker.common.interfaces.INameableDto;
 import com.maurofokker.common.persistence.model.INameableEntity;

@@ -72,17 +72,11 @@ public abstract class AbstractReadOnlyController<T extends IEntity> {
     // count
 
     protected final long countInternal() {
-        // InvalidDataAccessApiUsageException dataEx - ResourceNotFoundException
         return getService().count();
     }
 
-    // generic REST operations
-
-    // count
-
     /**
      * Counts all {@link Privilege} resources in the system
-     * 
      * @return
      */
     @RequestMapping(method = RequestMethod.GET, value = "/count")

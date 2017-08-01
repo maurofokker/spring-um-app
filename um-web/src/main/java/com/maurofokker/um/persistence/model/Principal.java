@@ -2,7 +2,7 @@ package com.maurofokker.um.persistence.model;
 
 import com.maurofokker.common.interfaces.INameableDto;
 import com.maurofokker.common.persistence.model.INameableEntity;
-import com.maurofokker.um.web.controller.dto.UserDto;
+import com.maurofokker.um.web.dto.UserDto;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

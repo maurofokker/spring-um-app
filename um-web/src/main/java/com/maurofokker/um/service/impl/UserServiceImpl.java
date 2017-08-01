@@ -2,12 +2,10 @@ package com.maurofokker.um.service.impl;
 
 import com.google.common.collect.Lists;
 import com.maurofokker.common.web.RestPreconditions;
-import com.maurofokker.um.persistence.dao.IUserJpaDao;
 import com.maurofokker.um.persistence.model.Principal;
-import com.maurofokker.um.persistence.model.User;
 import com.maurofokker.um.service.IPrincipalService;
 import com.maurofokker.um.service.IUserService;
-import com.maurofokker.um.web.controller.dto.UserDto;
+import com.maurofokker.um.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

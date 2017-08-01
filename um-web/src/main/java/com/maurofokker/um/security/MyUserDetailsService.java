@@ -27,7 +27,7 @@ import java.util.Set;
  * Database user authentication service
  */
 @Component
-public class MyUserDetailsService implements UserDetailsService {
+public final class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
     private IPrincipalService principalService;
