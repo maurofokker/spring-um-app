@@ -1,16 +1,22 @@
 package com.maurofokker.um.spring;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by mgaldamesc on 01-08-2017.
  */
-//@Configurarion
+@Configuration
 public class UmServletConfig {
 
     @Bean
@@ -33,7 +39,7 @@ public class UmServletConfig {
         return registration;
     }
 
-    /* @Bean
+    @Bean
     @Order(1)
     public FilterRegistrationBean springSecurityFilterChain() {
         final FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
@@ -43,6 +49,6 @@ public class UmServletConfig {
         urlPatterns.add("/*");
         filterRegBean.setUrlPatterns(urlPatterns);
         return filterRegBean;
-    }*/
+    }
 
 }
