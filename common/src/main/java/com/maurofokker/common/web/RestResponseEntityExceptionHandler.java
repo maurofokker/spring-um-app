@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -101,18 +102,23 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     // 403
 
-    @ExceptionHandler({ MyForbiddenException.class })
-    protected ResponseEntity<Object> handleForbidden(final MyForbiddenException ex, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    //@ExceptionHandler({ MyForbiddenException.class })
+    @ExceptionHandler({ AccessDeniedException.class })
+    protected ResponseEntity<Object> handleForbidden(final AccessDeniedException ex, final WebRequest request) {
+        log.error("403 Status Code", ex);
+
+        final ApiError apiError = message(HttpStatus.FORBIDDEN, ex);
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     // 404
 
     @ExceptionHandler({ MyEntityNotFoundException.class })
     protected ResponseEntity<Object> handleNotFound(final MyEntityNotFoundException ex, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        log.warn("Not Found: " + ex.getMessage());
+
+        final ApiError apiError = message(HttpStatus.NOT_FOUND, ex);
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(value = { EntityNotFoundException.class })
@@ -125,8 +131,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({ InvalidDataAccessApiUsageException.class, DataAccessException.class, MyConflictException.class })
     protected ResponseEntity<Object> handleConflict(final RuntimeException ex, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        log.warn("Conflict: " + ex.getMessage());
+
+        final ApiError apiError = message(HttpStatus.CONFLICT, ex);
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
     // 412
@@ -141,9 +149,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({ NullPointerException.class, IllegalArgumentException.class, IllegalStateException.class })
     protected ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
-        logger.error("500 Status Code", ex);
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        log.error("500 Status Code", ex);
+
+        final ApiError apiError = message(HttpStatus.INTERNAL_SERVER_ERROR, ex);
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
 }

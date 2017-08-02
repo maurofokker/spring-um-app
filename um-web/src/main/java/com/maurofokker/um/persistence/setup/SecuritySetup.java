@@ -111,14 +111,17 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
         Preconditions.checkNotNull(canUserWrite);
 
         createRoleIfNotExisting(Roles.ROLE_ADMIN, Sets.<Privilege> newHashSet(canUserRead, canUserWrite, canRoleRead, canRoleWrite, canPrivilegeRead, canPrivilegeWrite));
+        createRoleIfNotExisting(Roles.ROLE_USER, Sets.<Privilege> newHashSet(canUserRead, canRoleRead, canPrivilegeRead));
     }
 
     final void createRoleIfNotExisting(final String name, final Set<Privilege> privileges) {
         final Role entityByName = roleService.findByName(name);
         if (entityByName == null) {
+            logger.info("Role not exist, creating...");
             final Role entity = new Role(name);
             entity.setPrivileges(privileges);
             roleService.create(entity);
+            logger.info("Role created...");
         }
     }
 

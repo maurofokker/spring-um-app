@@ -96,7 +96,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured(Um.Privileges.CAN_USER_WRITE)
+    @Secured(Um.Privileges.CAN_USER_WRITE)                          // method level security
     public void delete(@PathVariable("id") final Long id) {
         deleteByIdInternal(id);
     }
