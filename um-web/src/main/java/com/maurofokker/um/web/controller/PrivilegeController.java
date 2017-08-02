@@ -5,9 +5,11 @@ import com.maurofokker.common.web.controller.AbstractController;
 import com.maurofokker.common.web.controller.ISortingController;
 import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.service.IPrivilegeService;
+import com.maurofokker.um.util.Um;
 import com.maurofokker.um.util.UmMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @Override
     @RequestMapping(params = { QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT_BY }, method = RequestMethod.GET)
     @ResponseBody
+    @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
     public List<Privilege> findAllPaginatedAndSorted(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size, @RequestParam(value = QueryConstants.SORT_BY) final String sortBy,
                                                      @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
         return findPaginatedAndSortedInternal(page, size, sortBy, sortOrder);
@@ -41,6 +44,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @Override
     @RequestMapping(params = { QueryConstants.PAGE, QueryConstants.SIZE }, method = RequestMethod.GET)
     @ResponseBody
+    @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
     public List<Privilege> findAllPaginated(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size) {
         return findPaginatedInternal(page, size);
     }
@@ -55,6 +59,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @Override
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
     public List<Privilege> findAll(final HttpServletRequest request) {
         return findAllInternal(request);
     }
@@ -63,6 +68,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
+    @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
     public Privilege findOne(@PathVariable("id") final Long id) {
         return findOneInternal(id);
     }
@@ -71,6 +77,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @Secured(Um.Privileges.CAN_PRIVILEGE_WRITE)
     public void create(@RequestBody @Valid final Privilege resource) {
         createInternal(resource);
     }
@@ -79,6 +86,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
+    @Secured(Um.Privileges.CAN_PRIVILEGE_WRITE)
     public void update(@PathVariable("id") final Long id, @RequestBody final Privilege resource) {
         updateInternal(id, resource);
     }
@@ -87,6 +95,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured(Um.Privileges.CAN_PRIVILEGE_WRITE)
     public void delete(@PathVariable("id") final Long id) {
         deleteByIdInternal(id);
     }

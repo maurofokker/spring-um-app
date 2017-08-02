@@ -1,9 +1,11 @@
 package com.maurofokker.um.persistence.setup;
 
 import com.maurofokker.common.spring.util.Profiles;
+import com.maurofokker.um.persistence.model.Principal;
 import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.persistence.model.User;
+import com.maurofokker.um.service.IPrincipalService;
 import com.maurofokker.um.service.IPrivilegeService;
 import com.maurofokker.um.service.IRoleService;
 import com.maurofokker.um.service.IUserService;
@@ -27,7 +29,7 @@ import java.util.Set;
  * The main focus here is creating some standard privileges, then roles and finally some default principals/users
  */
 @Component
-@Profile(Profiles.PRODUCTION)
+@Profile(Profiles.DEPLOYED)
 public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent> {
     private final Logger logger = LoggerFactory.getLogger(SecuritySetup.class);
 
@@ -35,6 +37,9 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IPrincipalService principalService;
 
     @Autowired
     private IRoleService roleService;
@@ -60,7 +65,7 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
 
             createPrivileges();
             createRoles();
-            createUserss();
+            createPrincipals();
 
             setupDone = true;
             logger.info("Setup Done");
@@ -106,31 +111,35 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
         Preconditions.checkNotNull(canUserWrite);
 
         createRoleIfNotExisting(Roles.ROLE_ADMIN, Sets.<Privilege> newHashSet(canUserRead, canUserWrite, canRoleRead, canRoleWrite, canPrivilegeRead, canPrivilegeWrite));
+        createRoleIfNotExisting(Roles.ROLE_USER, Sets.<Privilege> newHashSet(canUserRead, canRoleRead, canPrivilegeRead));
     }
 
     final void createRoleIfNotExisting(final String name, final Set<Privilege> privileges) {
         final Role entityByName = roleService.findByName(name);
         if (entityByName == null) {
+            logger.info("Role not exist, creating...");
             final Role entity = new Role(name);
             entity.setPrivileges(privileges);
             roleService.create(entity);
+            logger.info("Role created...");
         }
     }
 
-    // User/User
+    // Principal/User
 
-    final void createUserss() {
+    final void createPrincipals() {
         final Role roleAdmin = roleService.findByName(Roles.ROLE_ADMIN);
+        final Role roleUser = roleService.findByName(Roles.ROLE_USER);
 
-        // createUserIfNotExisting(SecurityConstants.ADMIN_USERNAME, SecurityConstants.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
-        createUserIfNotExisting(Um.ADMIN_EMAIL, Um.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
+        createPrincipalIfNotExisting(Um.ADMIN_EMAIL, Um.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
+        createPrincipalIfNotExisting(Um.USER_EMAIL, Um.USER_PASS, Sets.<Role> newHashSet(roleUser));
     }
 
-    final void createUserIfNotExisting(final String loginName, final String pass, final Set<Role> roles) {
-        final User entityByName = userService.findByName(loginName);
+    final void createPrincipalIfNotExisting(final String loginName, final String pass, final Set<Role> roles) {
+        final Principal entityByName = principalService.findByName(loginName);
         if (entityByName == null) {
-            final User entity = new User(loginName, pass, roles);
-            userService.create(entity);
+            final Principal entity = new Principal(loginName, pass, roles);
+            principalService.create(entity);
         }
     }
 
