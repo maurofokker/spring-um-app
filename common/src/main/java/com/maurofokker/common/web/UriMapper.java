@@ -1,10 +1,12 @@
 package com.maurofokker.common.web;
 
 import com.maurofokker.common.persistence.model.IEntity;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by mgaldamesc on 01-08-2017.
  */
+@Component
 public class UriMapper implements IUriMapper {
 
     public UriMapper() {
