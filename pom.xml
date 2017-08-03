@@ -11,6 +11,7 @@
 		<module>um-web</module>
         <module>common-client</module>
         <module>common-test</module>
+        <module>um-client</module>
     </modules>
     <packaging>pom</packaging>
 

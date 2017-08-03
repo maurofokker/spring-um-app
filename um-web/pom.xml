@@ -32,6 +32,35 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.maurofokker</groupId>
+			<artifactId>common-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>com.maurofokker</groupId>
+			<artifactId>common-test</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.maurofokker</groupId>
+			<artifactId>um-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.maurofokker</groupId>
+			<artifactId>um-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+		</dependency>
+
 		<!-- web -->
 
 		<dependency>

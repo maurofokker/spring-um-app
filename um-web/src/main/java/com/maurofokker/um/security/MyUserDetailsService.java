@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 import com.maurofokker.um.persistence.model.Principal;
 import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.persistence.model.Role;
-import com.maurofokker.um.service.IPrincipalService;
+import com.maurofokker.um.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -30,7 +30,7 @@ import java.util.Set;
 public final class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private IPrincipalService principalService;
+    private IUserService principalService;
 
     public MyUserDetailsService() {
         super();
@@ -43,7 +43,7 @@ public final class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Preconditions.checkNotNull(username);
 
-        final Principal principal = principalService.findByName(username);
+        final com.maurofokker.um.persistence.model.User principal = principalService.findByName(username);
         if (principal == null) {
             throw new UsernameNotFoundException("Username was not found: " + username);
         }

@@ -2,23 +2,17 @@ package com.maurofokker.um.persistence.model;
 
 import com.maurofokker.common.interfaces.INameableDto;
 import com.maurofokker.common.persistence.model.INameableEntity;
-import com.maurofokker.um.web.dto.UserDto;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
 
-/**
- * Created by mgaldamesc on 01-08-2017.
- */
 @Entity
-@XmlRootElement
-public class Principal implements INameableEntity, INameableDto {
+public class User implements INameableEntity, INameableDto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "PRINCIPAL_ID")
+    @Column(name = "USER_ID")
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -35,18 +29,17 @@ public class Principal implements INameableEntity, INameableDto {
 
     // @formatter:off
     @ManyToMany( /* cascade = { CascadeType.REMOVE }, */fetch = FetchType.EAGER)
-    @JoinTable(joinColumns = { @JoinColumn(name = "PRINCIPAL_ID", referencedColumnName = "PRINCIPAL_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") })
-    @XStreamImplicit
+    @JoinTable(joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") })
     private Set<Role> roles;
-    // @formatter:on
 
-    public Principal() {
+    // @formatter:on
+    public User() {
         super();
 
         locked = false;
     }
 
-    public Principal(final String nameToSet, final String passwordToSet, final Set<Role> rolesToSet) {
+    public User(final String nameToSet, final String passwordToSet, final Set<Role> rolesToSet) {
         super();
 
         name = nameToSet;
@@ -54,7 +47,7 @@ public class Principal implements INameableEntity, INameableDto {
         roles = rolesToSet;
     }
 
-    public Principal(final UserDto userDto) {
+    public User(final User userDto) {
         super();
 
         name = userDto.getName();
@@ -134,7 +127,7 @@ public class Principal implements INameableEntity, INameableDto {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final Principal other = (Principal) obj;
+        final User other = (User) obj;
         if (name == null) {
             if (other.name != null)
                 return false;

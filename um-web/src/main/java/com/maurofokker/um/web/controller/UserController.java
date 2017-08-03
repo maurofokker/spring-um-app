@@ -7,7 +7,6 @@ import com.maurofokker.um.persistence.model.User;
 import com.maurofokker.um.service.IUserService;
 import com.maurofokker.um.util.Um;
 import com.maurofokker.um.util.UmMappings;
-import com.maurofokker.um.web.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -22,13 +21,13 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value = UmMappings.USERS)
-public class UserController extends AbstractController<UserDto> implements ISortingController<UserDto> {
+public class UserController extends AbstractController<User> implements ISortingController<User> {
 
     @Autowired
     private IUserService service;
 
     public UserController() {
-        super(UserDto.class);
+        super(User.class);
     }
 
     // API
@@ -39,7 +38,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @RequestMapping(params = { QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT_BY }, method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_USER_READ)
-    public List<UserDto> findAllPaginatedAndSorted(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size, @RequestParam(value = QueryConstants.SORT_BY) final String sortBy,
+    public List<User> findAllPaginatedAndSorted(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size, @RequestParam(value = QueryConstants.SORT_BY) final String sortBy,
                                                    @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder,
                                                    final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findPaginatedAndSortedInternal(page, size, sortBy, sortOrder, uriBuilder, response);
@@ -49,7 +48,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @RequestMapping(params = { QueryConstants.PAGE, QueryConstants.SIZE }, method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_USER_READ)
-    public List<UserDto> findAllPaginated(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size,
+    public List<User> findAllPaginated(@RequestParam(value = QueryConstants.PAGE) final int page, @RequestParam(value = QueryConstants.SIZE) final int size,
                                           final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findPaginatedInternal(page, size, uriBuilder, response);
     }
@@ -58,7 +57,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @RequestMapping(params = { QueryConstants.SORT_BY }, method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_USER_READ)
-    public List<UserDto> findAllSorted(@RequestParam(value = QueryConstants.SORT_BY) final String sortBy, @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
+    public List<User> findAllSorted(@RequestParam(value = QueryConstants.SORT_BY) final String sortBy, @RequestParam(value = QueryConstants.SORT_ORDER) final String sortOrder) {
         return findAllSortedInternal(sortBy, sortOrder);
     }
 
@@ -66,7 +65,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_USER_READ)
-    public List<UserDto> findAll(final HttpServletRequest request, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+    public List<User> findAll(final HttpServletRequest request, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findAllInternal(request, uriBuilder, response);
     }
 
@@ -75,7 +74,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_USER_READ)
-    public UserDto findOne(@PathVariable("id") final Long id, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+    public User findOne(@PathVariable("id") final Long id, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findOneInternal(id, uriBuilder, response);
     }
 
@@ -83,7 +82,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid final UserDto resource, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+    public void create(@RequestBody @Valid final User resource, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         createInternal(resource, uriBuilder, response);
     }
 
@@ -92,7 +91,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @Secured(Um.Privileges.CAN_USER_WRITE)
-    public void update(@PathVariable("id") final Long id, @RequestBody @Valid final UserDto resource) {
+    public void update(@PathVariable("id") final Long id, @RequestBody @Valid final User resource) {
         updateInternal(id, resource);
     }
 
