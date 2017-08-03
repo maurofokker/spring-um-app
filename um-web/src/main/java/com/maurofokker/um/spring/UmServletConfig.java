@@ -1,5 +1,6 @@
 package com.maurofokker.um.spring;
 
+import com.maurofokker.um.security.SimpleCorsFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +50,11 @@ public class UmServletConfig {
         urlPatterns.add("/*");
         filterRegBean.setUrlPatterns(urlPatterns);
         return filterRegBean;
+    }
+
+    @Bean
+    public SimpleCorsFilter simpleCorsFilter() {
+        return new SimpleCorsFilter();
     }
 
 }

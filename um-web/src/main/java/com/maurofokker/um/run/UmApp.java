@@ -23,6 +23,7 @@ import java.util.Map;
         SecurityAutoConfiguration.class,
         ErrorMvcAutoConfiguration.class
 }) // @formatter:on
+/*
 @Import({ // @formatter:off
         UmContextConfig.class,
         UmPersistenceJpaConfig.class,
@@ -31,26 +32,40 @@ import java.util.Map;
         UmServletConfig.class,
         UmJavaSecurityConfig.class
 }) // @formatter:on
+*/
 public class UmApp extends SpringBootServletInitializer {
     // SpringBootServletInitializer da la posibilidad de hacer deploy de la de forma tradicional
     // al deshacerse de web.xml
 
-    public UmApp() {
-        super();
-    }
+    private final static Object[] CONFIGS = { // @formatter:off
+            UmContextConfig.class,
+            UmPersistenceJpaConfig.class,
+            UmServiceConfig.class,
+            UmWebConfig.class,
+            UmServletConfig.class,
+            UmJavaSecurityConfig.class,
+
+            UmApp.class
+    }; // @formatter:on
 
     // Trae toda la configuracion al cargar el UmApp que carga el resto de configuraciones
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder application) {
         //return application.sources(UmApp.class);
-        return application.initializers(new MyApplicationContextInitializer()).sources(UmApp.class);
+        //return application.initializers(new MyApplicationContextInitializer()).sources(UmApp.class);
+        return application.sources(CONFIGS).initializers(new MyApplicationContextInitializer());
     }
 
     // metodo que corre toda la app
     // con esto se puede hacer deploy con Spring Boot o de forma normal en otro web server
     public static void main(final String... args) {
         //SpringApplication.run(UmApp.class, args);
-        new SpringApplicationBuilder(UmApp.class).initializers(new MyApplicationContextInitializer()).run(args);
+
+        //new SpringApplicationBuilder(UmApp.class).initializers(new MyApplicationContextInitializer()).run(args);
+
+        final SpringApplication springApplication = new SpringApplication(CONFIGS);
+        springApplication.addInitializers(new MyApplicationContextInitializer());
+        springApplication.run(args);
     }
 
 }
