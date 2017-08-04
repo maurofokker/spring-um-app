@@ -53,6 +53,8 @@ public class UmServletConfig {
         return filterRegBean;
     }
     */
+
+    // INFO this is for relaxing CORS filter because rest server is running in different port than ui
     @Bean
     public SimpleCorsFilter simpleCorsFilter() {
         return new SimpleCorsFilter();
