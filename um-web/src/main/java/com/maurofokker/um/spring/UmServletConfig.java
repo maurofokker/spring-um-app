@@ -40,6 +40,7 @@ public class UmServletConfig {
         return registration;
     }
 
+    /*
     @Bean
     @Order(1)
     public FilterRegistrationBean springSecurityFilterChain() {
@@ -51,7 +52,7 @@ public class UmServletConfig {
         filterRegBean.setUrlPatterns(urlPatterns);
         return filterRegBean;
     }
-
+    */
     @Bean
     public SimpleCorsFilter simpleCorsFilter() {
         return new SimpleCorsFilter();

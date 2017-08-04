@@ -43,7 +43,7 @@ public class UmApp extends SpringBootServletInitializer {
             UmServiceConfig.class,
             UmWebConfig.class,
             UmServletConfig.class,
-            UmJavaSecurityConfig.class,
+            //UmJavaSecurityConfig.class,
 
             UmApp.class
     }; // @formatter:on

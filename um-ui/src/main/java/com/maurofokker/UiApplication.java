@@ -10,6 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class UiApplication {
 
     public static void main(final String[] args) {
-        SpringApplication.run(UiApplication.class);
+        SpringApplication.run(UiApplication.class); //INFO just to serve static files
     }
 }
