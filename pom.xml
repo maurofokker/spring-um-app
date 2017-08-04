@@ -9,6 +9,10 @@
     <modules>
         <module>common</module>
 		<module>um-web</module>
+        <module>common-client</module>
+        <module>common-test</module>
+        <module>um-client</module>
+        <module>um-ui</module>
     </modules>
     <packaging>pom</packaging>
 

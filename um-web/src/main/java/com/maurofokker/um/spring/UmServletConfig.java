@@ -1,5 +1,6 @@
 package com.maurofokker.um.spring;
 
+import com.maurofokker.um.security.SimpleCorsFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,7 @@ public class UmServletConfig {
         return registration;
     }
 
+    /*
     @Bean
     @Order(1)
     public FilterRegistrationBean springSecurityFilterChain() {
@@ -49,6 +51,13 @@ public class UmServletConfig {
         urlPatterns.add("/*");
         filterRegBean.setUrlPatterns(urlPatterns);
         return filterRegBean;
+    }
+    */
+
+    // INFO this is for relaxing CORS filter because rest server is running in different port than ui
+    @Bean
+    public SimpleCorsFilter simpleCorsFilter() {
+        return new SimpleCorsFilter();
     }
 
 }

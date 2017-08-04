@@ -14,10 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 /**
  * Created by mgaldamesc on 01-08-2017.
  */
-@Configuration
-@EnableWebSecurity
-@ComponentScan("com.maurofokker.um.security")
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)  // enable @Secured in controller and Pre - Post security annotation
+//@Configuration
+//@EnableWebSecurity
+//@ComponentScan("com.maurofokker.um.security")
+//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)  // enable @Secured in controller and Pre - Post security annotation
 public class UmJavaSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -32,6 +32,7 @@ public class UmJavaSecurityConfig extends WebSecurityConfigurerAdapter {
     // HTTP element that we had in our XML configuration
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+
         // @formatter:off
         http.
                 authorizeRequests().                    // opening up this authorization request so that we can start mapping our request

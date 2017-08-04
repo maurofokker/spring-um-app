@@ -2,21 +2,29 @@ package com.maurofokker.um.persistence.model;
 
 import com.maurofokker.common.interfaces.INameableDto;
 import com.maurofokker.common.persistence.model.INameableEntity;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
 
+/**
+ * Created by mgaldamesc on 01-08-2017.
+ */
 @Entity
-public class User implements INameableEntity, INameableDto {
-
+@XmlRootElement
+public class Principal implements INameableEntity, INameableDto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "USER_ID")
+    @Column(name = "PRINCIPAL_ID")
     private Long id;
 
     @Column(unique = true, nullable = false)
     private String name;
+
+    @Column(unique = true, nullable = true)
+    private String email;
 
     @Column(nullable = false)
     private String password;
@@ -26,22 +34,32 @@ public class User implements INameableEntity, INameableDto {
 
     // @formatter:off
     @ManyToMany( /* cascade = { CascadeType.REMOVE }, */fetch = FetchType.EAGER)
-    @JoinTable(joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") })
+    @JoinTable(joinColumns = { @JoinColumn(name = "PRINCIPAL_ID", referencedColumnName = "PRINCIPAL_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") })
+    @XStreamImplicit
     private Set<Role> roles;
-
     // @formatter:on
-    public User() {
+
+    public Principal() {
         super();
 
         locked = false;
     }
 
-    public User(final String nameToSet, final String passwordToSet, final Set<Role> rolesToSet) {
+    public Principal(final String nameToSet, final String passwordToSet, final Set<Role> rolesToSet) {
         super();
 
         name = nameToSet;
         password = passwordToSet;
         roles = rolesToSet;
+    }
+
+    public Principal(final User userDto) {
+        super();
+
+        name = userDto.getName();
+        email = userDto.getEmail();
+        password = userDto.getPassword();
+        roles = userDto.getRoles();
     }
 
     // API
@@ -63,6 +81,14 @@ public class User implements INameableEntity, INameableDto {
 
     public void setName(final String nameToSet) {
         name = nameToSet;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -107,7 +133,7 @@ public class User implements INameableEntity, INameableDto {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final User other = (User) obj;
+        final Principal other = (Principal) obj;
         if (name == null) {
             if (other.name != null)
                 return false;

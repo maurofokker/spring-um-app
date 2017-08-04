@@ -1,11 +1,9 @@
 package com.maurofokker.um.persistence.setup;
 
 import com.maurofokker.common.spring.util.Profiles;
-import com.maurofokker.um.persistence.model.Principal;
 import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.persistence.model.User;
-import com.maurofokker.um.service.IPrincipalService;
 import com.maurofokker.um.service.IPrivilegeService;
 import com.maurofokker.um.service.IRoleService;
 import com.maurofokker.um.service.IUserService;
@@ -38,8 +36,10 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
     @Autowired
     private IUserService userService;
 
+    /*
     @Autowired
     private IPrincipalService principalService;
+    */
 
     @Autowired
     private IRoleService roleService;
@@ -65,7 +65,8 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
 
             createPrivileges();
             createRoles();
-            createPrincipals();
+            //createPrincipals();
+            createUsers();
 
             setupDone = true;
             logger.info("Setup Done");
@@ -125,8 +126,26 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
         }
     }
 
+    // User/User
+
+    final void createUsers() {
+        final Role roleAdmin = roleService.findByName(Roles.ROLE_ADMIN);
+        final Role roleUser = roleService.findByName(Roles.ROLE_USER);
+
+        createUserIfNotExisting(Um.ADMIN_EMAIL, Um.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
+        createUserIfNotExisting(Um.USER_EMAIL, Um.USER_PASS, Sets.<Role> newHashSet(roleUser));
+    }
+
+    final void createUserIfNotExisting(final String loginName, final String pass, final Set<Role> roles) {
+        final User entityByName = userService.findByName(loginName);
+        if (entityByName == null) {
+            final User entity = new User(loginName, pass, roles);
+            userService.create(entity);
+        }
+    }
     // Principal/User
 
+    /*
     final void createPrincipals() {
         final Role roleAdmin = roleService.findByName(Roles.ROLE_ADMIN);
         final Role roleUser = roleService.findByName(Roles.ROLE_USER);
@@ -142,5 +161,5 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
             principalService.create(entity);
         }
     }
-
+    */
 }

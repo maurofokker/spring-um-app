@@ -1,10 +1,10 @@
 package com.maurofokker.um.service;
 
 import com.maurofokker.common.persistence.service.IService;
-import com.maurofokker.um.web.dto.UserDto;
+import com.maurofokker.um.persistence.model.User;
 
-public interface IUserService extends IService<UserDto> {
+public interface IUserService extends IService<User> {
 
-    UserDto getCurrentUser();
+    //UserDto getCurrentUser();
 
 }
