@@ -72,6 +72,7 @@ public class RoleController extends AbstractController<Role> implements ISorting
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
+    @CrossOrigin(origins = "*")  // deals with cross origin and we can avoid using filter bean
     //@Secured(Um.Privileges.CAN_ROLE_READ)
     public Role findOne(@PathVariable("id") final Long id, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findOneInternal(id, uriBuilder, response);
