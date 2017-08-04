@@ -76,24 +76,27 @@
 		</dependency>
 
 		<!-- marshalling -->
-
+		<!--
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-
+		-->
 		<!-- reuse jackson library for xml representation (multiple content negotiation since spring 4.1) -->
+		<!--
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
 		</dependency>
+		-->
 		<!-- better than stax implementation in jdk-->
+		<!--
 		<dependency>
 			<groupId>org.codehaus.woodstox</groupId>
 			<artifactId>woodstox-core-asl</artifactId>
 			<version>4.4.1</version>
 		</dependency>
-
+		-->
 		<!-- test scoped -->
 
 		<dependency>
@@ -102,11 +105,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
