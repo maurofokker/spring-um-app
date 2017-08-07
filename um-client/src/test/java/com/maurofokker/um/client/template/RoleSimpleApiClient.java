@@ -6,6 +6,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.maurofokker.common.spring.util.Profiles;
+import com.maurofokker.common.web.RestPreconditions;
 import com.maurofokker.um.client.UmPaths;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.util.Um;
@@ -33,7 +34,8 @@ public final class RoleSimpleApiClient {
 
     public final Role findOne(final long id) {
         final Response findOneResponse = findOneAsResponse(id);
-        Preconditions.checkState(findOneResponse.getStatusCode() == 200, "Find One operation didn´t result in a 200 OK");
+        //Preconditions.checkState(findOneResponse.getStatusCode() == 200, "Find One operation didn´t result in a 200 OK");
+        RestPreconditions.checkFound(findOneResponse.getStatusCode() == 200, "Find One operation didn´t result in a 200 OK");
         return findOneResponse.as(Role.class);
     }
 

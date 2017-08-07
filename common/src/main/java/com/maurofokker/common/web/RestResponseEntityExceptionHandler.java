@@ -115,18 +115,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     // 404
 
-    @ExceptionHandler({ MyEntityNotFoundException.class })
-    protected ResponseEntity<Object> handleNotFound(final MyEntityNotFoundException ex, final WebRequest request) {
+    @ExceptionHandler({ EntityNotFoundException.class, MyEntityNotFoundException.class, MyResourceNotFoundException.class })
+    protected ResponseEntity<Object> handleNotFound(final RuntimeException ex, final WebRequest request) {
         log.warn("Not Found: " + ex.getMessage());
 
         final ApiError apiError = message(HttpStatus.NOT_FOUND, ex);
         return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-    }
-
-    @ExceptionHandler(value = { EntityNotFoundException.class })
-    protected ResponseEntity<Object> handleLibraryNotFound(final EntityNotFoundException ex, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     // 409

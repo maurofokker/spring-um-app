@@ -5,6 +5,8 @@ import com.maurofokker.common.web.IUriMapper;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.persistence.model.User;
 import com.maurofokker.um.persistence.model.Privilege;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("client")
 public final class UmPaths {
+    private final Logger logger = LoggerFactory.getLogger(UmPaths.class);
 
     @Value("${http.sec.path}")
     private String secPath;
@@ -29,11 +32,15 @@ public final class UmPaths {
     // API
 
     public final String getContext() {
-        return commonPaths.getServerRoot() + secPath;
+        String context = commonPaths.getServerRoot() + secPath;
+        logger.info("App context is {}", context);
+        return context;
     }
 
     public final String getRootUri() {
-        return getContext() + "/api/";
+        String rootUri = getContext() + "/api/";
+        logger.info("Root uri is {}", rootUri);
+        return rootUri;
     }
 
     public final String getUserUri() {
