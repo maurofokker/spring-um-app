@@ -1,5 +1,6 @@
 package com.maurofokker.um.web.role;
 
+import com.google.common.collect.Sets;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
@@ -10,6 +11,7 @@ import com.maurofokker.um.spring.CommonTestConfig;
 import com.maurofokker.um.spring.UmClientConfig;
 import com.maurofokker.um.spring.UmLiveTestConfig;
 import com.maurofokker.um.util.Um;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -47,6 +49,18 @@ public class RoleBasicLiveTest {
         final List<Role> roles = response.as(List.class); // extracts from the body
 
         Assert.assertThat(roles, CoreMatchers.not(Matchers.<Role> empty()));
+    }
+
+    @Test
+    public void whenCreatingANewRole_thenRoleCanBeRetrieved() {
+        final Role newRole = new Role(RandomStringUtils.randomAlphabetic(6), Sets.newHashSet());
+        final RequestSpecification auth = RestAssured.given().auth().preemptive().basic(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
+        final Response createResponse = auth.contentType(ContentType.JSON).body(newRole).post(URI); // pass body req
+
+        final String locationHeader = createResponse.getHeader("Location"); // extract uri of created entity from header
+        final Role retrievedRole = auth.accept(ContentType.JSON).get(locationHeader).as(Role.class); // extract body with created Role from response
+
+        Assert.assertThat(newRole, CoreMatchers.equalTo(retrievedRole));
     }
 
 }
