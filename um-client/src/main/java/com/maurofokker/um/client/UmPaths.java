@@ -48,4 +48,12 @@ public final class UmPaths {
         return getRootUri() + uriMapper.getUriBase(Privilege.class);
     }
 
+    public final String getAuthenticationUri() {
+        return getRootUri() + "authentication";
+    }
+
+    public final String getLoginUri() {
+        return getContext() + "/j_spring_security_check";
+    }
+
 }

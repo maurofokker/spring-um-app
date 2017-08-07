@@ -144,4 +144,36 @@ public final class RestPreconditions {
             throw new MyBadRequestException(message);
         }
     }
+
+    /**
+     * Check if some value was found, otherwise throw exception.
+     *
+     * @param expression
+     *            has value true if found, otherwise false
+     *
+     * @throws MyResourceNotFoundException
+     *             if expression is false, means value not found.
+     */
+    public static <T> T checkFound(final T resource) {
+        return checkFound(resource, null);
+    }
+
+    /**
+     * Check if some value was found, otherwise throw exception.
+     *
+     * @param expression
+     *            has value true if found, otherwise false
+     * @param message
+     *            the message of the exception if the check fails
+     *
+     * @throws MyResourceNotFoundException
+     *             if expression is false, means value not found.
+     */
+    public static <T> T checkFound(final T resource, final String message) {
+        if (resource == null) {
+            throw new MyResourceNotFoundException(message);
+        }
+
+        return resource;
+    }
 }
