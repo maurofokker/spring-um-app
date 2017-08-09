@@ -24,6 +24,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @ActiveProfiles({Profiles.CLIENT, Profiles.TEST })
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -73,6 +76,83 @@ public class RoleSimpleLiveTest {
 
         // Then
         Assert.assertEquals(createdResource, newResource);
+    }
+
+    // find all
+
+    @Test
+    public final void whenAllResourcesAreRetrieved_then200IsReceived() {
+        // When
+        final Response response = getApi().read(getUri());
+
+        // Then
+        Assert.assertThat(response.getStatusCode(), CoreMatchers.is(200));
+    }
+
+    // create
+
+    @Test
+    public final void whenResourceIsCreated_then201IsReceived() {
+        // When
+        final Response response = getApi().createAsResponse(createNewResource());
+
+        // Then
+        assertThat(response.getStatusCode(), is(201));
+    }
+
+    @Test
+    public final void givenResourceHasNameWithSpace_whenResourceIsCreated_then201IsReceived() {
+        final Role newResource = createNewResource();
+        newResource.setName(randomAlphabetic(4) + " " + randomAlphabetic(4));
+
+        // When
+        final Response createAsResponse = getApi().createAsResponse(newResource);
+
+        // Then
+        assertThat(createAsResponse.getStatusCode(), is(201));
+    }
+
+    @Test
+    public final void whenResourceWithUnsupportedMediaTypeIsCreated_then415IsReceived() {
+        // When
+        final Response response = getApi().givenAuthenticated().contentType("unknown").post(getUri());
+
+        // Then
+        assertThat(response.getStatusCode(), is(415));
+    }
+
+    @Test
+    public final void whenResourceIsCreatedWithNonNullId_then409IsReceived() {
+        final Role resourceWithId = createNewResource();
+        resourceWithId.setId(5l);
+
+        // When
+        final Response response = getApi().createAsResponse(resourceWithId);
+
+        // Then
+        assertThat(response.getStatusCode(), is(409));
+    }
+
+    @Test
+    public final void whenResourceIsCreated_thenResponseContainsTheLocationHeader() {
+        // When
+        final Response response = getApi().createAsResponse(createNewResource());
+
+        // Then
+        assertNotNull(response.getHeader(HttpHeaders.LOCATION));
+    }
+
+    @Test
+    public final void givenResourceExists_whenResourceWithSameAttributeIsCreated_then409IsReceived() {
+        // Given
+        final Role newEntity = createNewResource();
+        getApi().createAsResponse(newEntity);
+
+        // when
+        final Response response = getApi().createAsResponse(newEntity);
+
+        // Then
+        assertThat(response.getStatusCode(), is(409));
     }
 
     // UTIL

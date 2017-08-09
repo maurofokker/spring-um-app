@@ -76,9 +76,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     /**
      * to handle validation exceptions i.e. data integrity in db (null not enable)
      */
-    @ExceptionHandler(value = { DataIntegrityViolationException.class, MyBadRequestException.class, ConstraintViolationException.class})
+    @ExceptionHandler(value = { DataIntegrityViolationException.class })
     public final ResponseEntity<Object> handleBadRequest(final RuntimeException ex, final WebRequest request) {
-        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        //return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        if (ExceptionUtils.getRootCauseMessage(ex).contains("uplicate") || ExceptionUtils.getRootCauseMessage(ex).contains("Unique")) {
+            final ApiError apiError = message(HttpStatus.CONFLICT, ex);
+            return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        }
+
+        final ApiError apiError = message(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+
     }
 
     /**
