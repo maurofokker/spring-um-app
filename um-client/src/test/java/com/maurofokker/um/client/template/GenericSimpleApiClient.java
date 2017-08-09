@@ -2,20 +2,19 @@ package com.maurofokker.um.client.template;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.maurofokker.client.marshall.IMarshaller;
+import com.maurofokker.common.interfaces.IDto;
 import com.maurofokker.common.spring.util.Profiles;
 import com.maurofokker.common.util.QueryConstants;
-import com.maurofokker.common.web.RestPreconditions;
 import com.maurofokker.common.web.WebConstants;
 import com.maurofokker.um.client.UmPaths;
-import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.util.Um;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
@@ -25,7 +24,7 @@ import java.util.List;
 
 @Component
 @Profile(Profiles.CLIENT)
-public final class RoleSimpleApiClient {
+public abstract class GenericSimpleApiClient<T extends IDto> {
 
     private final static String JSON = MediaType.APPLICATION_JSON.toString();
 
@@ -35,13 +34,17 @@ public final class RoleSimpleApiClient {
     @Autowired
     private IMarshaller marshaller;
 
-    private final Class<Role> clazz = Role.class;
+    private final Class<T> clazz;
+
+    public GenericSimpleApiClient(final Class<T> clazz) {
+        this.clazz = clazz;
+    }
 
     // API
 
     // find - one
 
-    public final Role findOne(final long id) {
+    public final T findOne(final long id) {
         final String uriOfResource = getUri() + WebConstants.PATH_SEP + id;
         return findOneByUri(uriOfResource);
     }
@@ -51,7 +54,7 @@ public final class RoleSimpleApiClient {
         return findByUriAsResponse(uriOfResource);
     }
 
-    private final Role findOneByUri(final String uriOfResource) {
+    private final T findOneByUri(final String uriOfResource) {
         String resourceAsMime = findOneByUriAsString(uriOfResource);
         return marshaller.decode(resourceAsMime, clazz);
     }
@@ -68,13 +71,15 @@ public final class RoleSimpleApiClient {
 
     }
 
-    public final List<Role> findAll() {
+    // find - all
+
+    public final List<T> findAll() {
         return findAll(getUri());
     }
 
-    public final List<Role> findAll(final String uri) {
+    public final List<T> findAll(final String uri) {
         final Response allAsResponse = read(uri);
-        final List<Role> listOfResources = marshaller.<Role> decodeList(allAsResponse.getBody().asString(), clazz);
+        final List<T> listOfResources = marshaller.<T> decodeList(allAsResponse.getBody().asString(), clazz);
         if (listOfResources == null) {
             return Lists.newArrayList();
         }
@@ -87,19 +92,19 @@ public final class RoleSimpleApiClient {
 
     // find - all (sorted, paginated)
 
-    public final List<Role> findAllSorted(final String sortBy, final String sortOrder) {
+    public final List<T> findAllSorted(final String sortBy, final String sortOrder) {
         final Response findAllResponse = findByUriAsResponse(getUri() + QueryConstants.Q_SORT_BY + sortBy + QueryConstants.S_ORDER + sortOrder);
-        return marshaller.<Role> decodeList(findAllResponse.getBody().asString(), clazz);
+        return marshaller.<T> decodeList(findAllResponse.getBody().asString(), clazz);
     }
 
-    public final List<Role> findAllPaginated(final int page, final int size) {
+    public final List<T> findAllPaginated(final int page, final int size) {
         final Response allPaginatedAsResponse = findAllPaginatedAsResponse(page, size);
-        return marshaller.<Role> decodeList(allPaginatedAsResponse.getBody().asString(), clazz);
+        return marshaller.<T> decodeList(allPaginatedAsResponse.getBody().asString(), clazz);
     }
 
-    public final List<Role> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder) {
+    public final List<T> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder) {
         final Response allPaginatedAndSortedAsResponse = findAllPaginatedAndSortedAsResponse(page, size, sortBy, sortOrder);
-        return marshaller.<Role> decodeList(allPaginatedAndSortedAsResponse.getBody().asString(), clazz);
+        return marshaller.<T> decodeList(allPaginatedAndSortedAsResponse.getBody().asString(), clazz);
     }
 
     public final Response findAllPaginatedAndSortedAsResponse(final int page, final int size, final String sortBy, final String sortOrder) {
@@ -161,23 +166,23 @@ public final class RoleSimpleApiClient {
 
     // create
 
-    public final Role create(final Role resource) {
+    public final T create(final T resource) {
 
         final String uriForResourceCreation = createAsUri(resource);
         final String resourceAsMime = findOneByUriAsString(uriForResourceCreation);
         return marshaller.decode(resourceAsMime, clazz);
     }
 
-    public final String createAsUri(final Role resource) {
+    public final String createAsUri(final T resource) {
         final Response response = createAsResponse(resource);
         Preconditions.checkState(response.getStatusCode() == 201, "create operation: " + response.getStatusCode());
 
-        final String locationOfCreatedResource = response.getHeader(org.apache.http.HttpHeaders.LOCATION);
+        final String locationOfCreatedResource = response.getHeader(HttpHeaders.LOCATION);
         Preconditions.checkNotNull(locationOfCreatedResource);
         return locationOfCreatedResource;
     }
 
-    public final Response createAsResponse(final Role resource) {
+    public final Response createAsResponse(final T resource) {
         Preconditions.checkNotNull(resource);
         final RequestSpecification givenAuthenticated = givenAuthenticated();
 
@@ -193,12 +198,12 @@ public final class RoleSimpleApiClient {
 
     // update
 
-    public final void update(final Role resource) {
+    public final void update(final T resource) {
         final Response updateResponse = updateAsResponse(resource);
         Preconditions.checkState(updateResponse.getStatusCode() == 200, "Update Operation: " + updateResponse.getStatusCode());
     }
 
-    public final Response updateAsResponse(final Role resource) {
+    public final Response updateAsResponse(final T resource) {
         Preconditions.checkNotNull(resource);
 
         return givenAuthenticated().contentType(JSON).body(resource).put(getUri() + "/" + resource.getId());
@@ -217,9 +222,7 @@ public final class RoleSimpleApiClient {
 
     // API - other
 
-    public final String getUri() {
-        return paths.getRoleUri();
-    }
+    public abstract String getUri();
 
     public final RequestSpecification givenAuthenticated() {
         final Pair<String, String> credentials = getDefaultCredentials();
@@ -237,7 +240,7 @@ public final class RoleSimpleApiClient {
     }
 
     private final RequestSpecification readRequest(final RequestSpecification req) {
-        return req.header(org.apache.http.HttpHeaders.ACCEPT, JSON);
+        return req.header(HttpHeaders.ACCEPT, JSON);
     }
 
     private final Pair<String, String> getDefaultCredentials() {
