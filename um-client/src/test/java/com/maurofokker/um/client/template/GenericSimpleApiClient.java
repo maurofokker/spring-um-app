@@ -25,6 +25,7 @@ import java.util.List;
 @Component
 @Profile(Profiles.CLIENT)
 public abstract class GenericSimpleApiClient<T extends IDto> {
+    // extends IDto because the getId method in the IWithId interface
 
     private final static String JSON = MediaType.APPLICATION_JSON.toString();
 
@@ -222,6 +223,7 @@ public abstract class GenericSimpleApiClient<T extends IDto> {
 
     // API - other
 
+    // abstract because every client needs to define their particular uri
     public abstract String getUri();
 
     public final RequestSpecification givenAuthenticated() {
