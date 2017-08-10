@@ -5,7 +5,10 @@ import com.maurofokker.common.persistence.model.INameableEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Entity
 public class Role implements INameableEntity, INameableDto {
@@ -18,8 +21,11 @@ public class Role implements INameableEntity, INameableDto {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @NotNull
+    private String description;
+
     // @formatter:off
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany( /* cascade = { CascadeType.REMOVE }, */fetch = FetchType.EAGER)
     @JoinTable(joinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") }, inverseJoinColumns = { @JoinColumn(name = "PRIV_ID", referencedColumnName = "PRIV_ID") })
     private Set<Privilege> privileges;
     // @formatter:on
@@ -28,14 +34,24 @@ public class Role implements INameableEntity, INameableDto {
         super();
     }
 
-    public Role(final String nameToSet) {
+    public Role(final String nameToSet, final String description) {
         super();
         name = nameToSet;
+        this.description = description;
+    }
+
+    public Role(final String nameToSet) {
+        this(nameToSet, randomAlphabetic(6));
     }
 
     public Role(final String nameToSet, final Set<Privilege> privilegesToSet) {
+        this(nameToSet, randomAlphabetic(6), privilegesToSet);
+    }
+
+    public Role(final String nameToSet, final String description, final Set<Privilege> privilegesToSet) {
         super();
         name = nameToSet;
+        this.description = description;
         privileges = privilegesToSet;
     }
 
@@ -56,8 +72,17 @@ public class Role implements INameableEntity, INameableDto {
         return name;
     }
 
+    @Override
     public void setName(final String nameToSet) {
         name = nameToSet;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<Privilege> getPrivileges() {
