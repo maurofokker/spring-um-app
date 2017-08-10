@@ -60,7 +60,8 @@ public class RoleContractLiveTest {
 
     // changed the contract to a String, the idea is no rely in the Dto -almost rely, we still use Role-
     private final String createNewResource() throws IOException {
-        final InputStream resourceAsStream = getClass().getResourceAsStream("/data/role_json_01.json"); // load json from resource so is not hardcoded like above comment
+        //final InputStream resourceAsStream = getClass().getResourceAsStream("/data/role_json_01.json"); // load json from resource so is not hardcoded like above comment
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/data/role_json_02_new_property.json"); // when breaking contract add second versioned body
         // externalize json into a tree representation this is because we need to modify some values that are uniques or test will fail in second runs
         final JsonNode rootNode = new ObjectMapper().readTree(resourceAsStream); // externalize json into a tree representation this is because we need to modify some values that are uniques or test will fail in second runs
         ((ObjectNode) rootNode).set("name", JsonNodeFactory.instance.textNode(randomAlphabetic(8))); // modifying property so it take a random value to avoid unique constraints
