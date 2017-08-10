@@ -139,6 +139,14 @@ public final class RoleSimpleApiClientNoBase {
         return givenAuthenticated.contentType(JSON).body(resource).post(getUri());
     }
 
+    // overload method to receive a String instead a Dto
+    public final Response createAsResponse(final String resource) {
+        Preconditions.checkNotNull(resource);
+        final RequestSpecification givenAuthenticated = givenAuthenticated();
+
+        return givenAuthenticated.contentType(JSON).body(resource).post(getUri());
+    }
+
     // update
 
     public final void update(final Role resource) {

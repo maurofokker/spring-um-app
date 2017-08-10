@@ -1,6 +1,7 @@
 package com.maurofokker.um.web.role;
 
 import com.google.common.collect.Sets;
+import com.google.common.io.CharStreams;
 import com.jayway.restassured.response.Response;
 import com.maurofokker.common.spring.util.Profiles;
 import com.maurofokker.um.client.template.RoleSimpleApiClientNoBase;
@@ -19,6 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.is;
@@ -51,8 +54,18 @@ public class RoleContractLiveTest {
         return api;
     }
 
-    private final Role createNewResource() {
-        return new Role(randomAlphabetic(8), Sets.<Privilege> newHashSet());
+    // changed the contract to a String, the idea is no rely in the Dto -almost rely, we still use Role-
+    private final String createNewResource() throws IOException {
+        // "{\"id\": null, \"name\": \"" + randomAlphabetic(8) + "\", \"privileges\": []}" // hardcoded json body contract
+
+        /*
+        // Dto contract
+        final Role newRole = new Role(randomAlphabetic(8), Sets.<Privilege> newHashSet());
+        return getApi().getMarshaller().encode(newRole);
+        */
+
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/data/role_json_01.json"); // load json from resource so is not hardcoded like above comment
+        return CharStreams.toString(new InputStreamReader(resourceAsStream)); // using google guava to convert into string
     }
 
 }
