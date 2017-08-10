@@ -14,10 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 /**
  * Created by mgaldamesc on 01-08-2017.
  */
-//@Configuration
-//@EnableWebSecurity
-//@ComponentScan("com.maurofokker.um.security")
-//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)  // enable @Secured in controller and Pre - Post security annotation
+@Configuration
+@EnableWebSecurity
+@ComponentScan("com.maurofokker.um.security")
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)  // enable @Secured in controller and Pre - Post security annotation
 public class UmJavaSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

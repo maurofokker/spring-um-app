@@ -76,9 +76,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     /**
      * to handle validation exceptions i.e. data integrity in db (null not enable)
      */
-    @ExceptionHandler(value = { DataIntegrityViolationException.class, MyBadRequestException.class, ConstraintViolationException.class})
+    @ExceptionHandler(value = { DataIntegrityViolationException.class })
     public final ResponseEntity<Object> handleBadRequest(final RuntimeException ex, final WebRequest request) {
-        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        //return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        if (ExceptionUtils.getRootCauseMessage(ex).contains("uplicate") || ExceptionUtils.getRootCauseMessage(ex).contains("Unique")) {
+            final ApiError apiError = message(HttpStatus.CONFLICT, ex);
+            return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.CONFLICT, request);
+        }
+
+        final ApiError apiError = message(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+
     }
 
     /**
@@ -115,18 +123,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     // 404
 
-    @ExceptionHandler({ MyEntityNotFoundException.class })
-    protected ResponseEntity<Object> handleNotFound(final MyEntityNotFoundException ex, final WebRequest request) {
+    @ExceptionHandler({ EntityNotFoundException.class, MyEntityNotFoundException.class, MyResourceNotFoundException.class })
+    protected ResponseEntity<Object> handleNotFound(final RuntimeException ex, final WebRequest request) {
         log.warn("Not Found: " + ex.getMessage());
 
         final ApiError apiError = message(HttpStatus.NOT_FOUND, ex);
         return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-    }
-
-    @ExceptionHandler(value = { EntityNotFoundException.class })
-    protected ResponseEntity<Object> handleLibraryNotFound(final EntityNotFoundException ex, final WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     // 409
