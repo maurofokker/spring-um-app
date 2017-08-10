@@ -1,5 +1,9 @@
 package com.maurofokker.um.web.role;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
 import com.jayway.restassured.response.Response;
@@ -56,16 +60,31 @@ public class RoleContractLiveTest {
 
     // changed the contract to a String, the idea is no rely in the Dto -almost rely, we still use Role-
     private final String createNewResource() throws IOException {
-        // "{\"id\": null, \"name\": \"" + randomAlphabetic(8) + "\", \"privileges\": []}" // hardcoded json body contract
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/data/role_json_01.json"); // load json from resource so is not hardcoded like above comment
+        // externalize json into a tree representation this is because we need to modify some values that are uniques or test will fail in second runs
+        final JsonNode rootNode = new ObjectMapper().readTree(resourceAsStream); // externalize json into a tree representation this is because we need to modify some values that are uniques or test will fail in second runs
+        ((ObjectNode) rootNode).set("name", JsonNodeFactory.instance.textNode(randomAlphabetic(8))); // modifying property so it take a random value to avoid unique constraints
+        return rootNode.toString();
+    }
 
-        /*
-        // Dto contract
+    // this is loading a json and transform to string, so is not hardcoded in code
+    // also this option could fail because we are repeating values and some constraints may be unique
+    private final String createNewResource3() throws IOException {
+        final InputStream stream = getClass().getResourceAsStream("/data/role_json_01.json");
+        final String roleData = CharStreams.toString(new InputStreamReader(stream)); // using google guava to convert into string
+        return roleData;
+    }
+
+    // hardcoded body in code
+    private final String createNewResource2() {
+        final String roleData = "{\"id\":null,\"name\":\"" + randomAlphabetic(8) + "\",\"privileges\":[]}";
+        return roleData;
+    }
+
+    // contract with dto role
+    private final String createNewResource1() {
         final Role newRole = new Role(randomAlphabetic(8), Sets.<Privilege> newHashSet());
         return getApi().getMarshaller().encode(newRole);
-        */
-
-        final InputStream resourceAsStream = getClass().getResourceAsStream("/data/role_json_01.json"); // load json from resource so is not hardcoded like above comment
-        return CharStreams.toString(new InputStreamReader(resourceAsStream)); // using google guava to convert into string
     }
 
 }
