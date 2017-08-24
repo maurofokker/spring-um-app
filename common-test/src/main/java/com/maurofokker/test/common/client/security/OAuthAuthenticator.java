@@ -28,7 +28,7 @@ public class OAuthAuthenticator implements ITestAuthenticator {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     private static final String CLIENT_ID = "live-test";
-    private static final String CLIENT_SECRET = "bGl2ZS10ZXN0";
+    private static final String CLIENT_SECRET = "H0l4MuNd0";
 
     @Autowired
     private WebProperties webProps;
@@ -42,15 +42,19 @@ public class OAuthAuthenticator implements ITestAuthenticator {
     @Override
     public final RequestSpecification givenAuthenticated(final String username, final String password) {
         final String accessToken = getAccessToken(username, password);
+        // config of restassured to consume the Oauth2 secured api
         return RestAssured.given().auth().oauth2(accessToken, OAuthSignature.HEADER);
     }
 
     final String getAccessToken(final String username, final String password) {
         try {
+            // creates the URI (endpoint http://localhost:port/um-web/access/token...)
             final URI uri = new URI(webProps.getProtocol(), null, webProps.getHost(), webProps.getPort(), webProps.getPath() + webProps.getOauthPath(), null, null);
             final String url = uri.toString();
+            // for basic auth header to hit token api
             final String encodedCredentials = new String(Base64.encodeBase64((CLIENT_ID + ":" + CLIENT_SECRET).getBytes()));
 
+            // query string to the api to identify the client and generate the token
             final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "password");
             params.add("client_id", CLIENT_ID);
@@ -60,12 +64,16 @@ public class OAuthAuthenticator implements ITestAuthenticator {
             final HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Basic " + encodedCredentials);
 
+            // full request, headers + query string
             final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
 
+            // rest template to hit token api with post method
             final RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 
             final TokenResponse tokenResponse = restTemplate.postForObject(url, request, TokenResponse.class);
+
+            // extracts access token from api response and return it
             final String accessToken = tokenResponse.getAccessToken();
             return accessToken;
         } catch (final HttpClientErrorException e) {
