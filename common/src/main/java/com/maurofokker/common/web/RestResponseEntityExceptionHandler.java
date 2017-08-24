@@ -52,7 +52,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex, final HttpHeaders headers
             , final HttpStatus status, final WebRequest request) {
 
-        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), headers, HttpStatus.BAD_REQUEST, request);
+        logger.debug("Bad Request: ", ex);
+
+        final ApiError apiError = message(HttpStatus.BAD_REQUEST, ex);
+        return handleExceptionInternal(ex, apiError, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     /**
@@ -70,16 +73,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         final List<FieldError> fieldErrors = result.getFieldErrors();
         final ValidationErrorDTO dto = processFieldErrors(fieldErrors);
 
-        return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), headers, HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, dto, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     /**
      * to handle validation exceptions i.e. data integrity in db (null not enable)
      */
-    @ExceptionHandler(value = { DataIntegrityViolationException.class })
+    @ExceptionHandler(value = { ConstraintViolationException.class, DataIntegrityViolationException.class })
     public final ResponseEntity<Object> handleBadRequest(final RuntimeException ex, final WebRequest request) {
         //return handleExceptionInternal(ex, message(HttpStatus.BAD_REQUEST, ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-        if (ExceptionUtils.getRootCauseMessage(ex).contains("uplicate") || ExceptionUtils.getRootCauseMessage(ex).contains("Unique")) {
+        if (ExceptionUtils.getRootCauseMessage(ex).contains("uplicate") ) { //|| ExceptionUtils.getRootCauseMessage(ex).contains("Unique")) {
             final ApiError apiError = message(HttpStatus.CONFLICT, ex);
             return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.CONFLICT, request);
         }
@@ -87,27 +90,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         final ApiError apiError = message(HttpStatus.BAD_REQUEST, ex);
         return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 
-    }
-
-    /**
-     * message method uses the HTTP status and the exception to create this API error data transfer object
-     */
-    private ApiError message(final HttpStatus httpStatus, final Exception ex) {
-        final String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
-        final String devMessage = ExceptionUtils.getRootCauseMessage(ex);
-
-        return new ApiError(httpStatus.value(), message, devMessage);
-    }
-
-    private ValidationErrorDTO processFieldErrors(final List<FieldError> fieldErrors) {
-        final ValidationErrorDTO dto = new ValidationErrorDTO();
-
-        for (final FieldError fieldError : fieldErrors) {
-            final String localizedErrorMessage = fieldError.getDefaultMessage();
-            dto.addFieldError(fieldError.getField(), localizedErrorMessage);
-        }
-
-        return dto;
     }
 
     // 403
@@ -167,6 +149,29 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         final ApiError apiError = message(HttpStatus.INTERNAL_SERVER_ERROR, ex);
         return handleExceptionInternal(ex, apiError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    // UTILS
+
+    /**
+     * message method uses the HTTP status and the exception to create this API error data transfer object
+     */
+    private ApiError message(final HttpStatus httpStatus, final Exception ex) {
+        final String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+        final String devMessage = ExceptionUtils.getRootCauseMessage(ex);
+
+        return new ApiError(httpStatus.value(), message, devMessage);
+    }
+
+    private ValidationErrorDTO processFieldErrors(final List<FieldError> fieldErrors) {
+        final ValidationErrorDTO dto = new ValidationErrorDTO();
+
+        for (final FieldError fieldError : fieldErrors) {
+            final String localizedErrorMessage = fieldError.getDefaultMessage();
+            dto.addFieldError(fieldError.getField(), localizedErrorMessage);
+        }
+
+        return dto;
     }
 
 }
