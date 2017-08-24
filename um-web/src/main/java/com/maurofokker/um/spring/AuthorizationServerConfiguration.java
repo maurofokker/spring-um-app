@@ -47,7 +47,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients.inMemory()
                 .withClient("live-test")     // define a live-test (client id) client to work just with the live tests, used to hit token api
                 .secret("H0l4MuNd0")                // working with a trusted client so define a psw,
-                .authorizedGrantTypes("password")   // using the password flow.
+                .authorizedGrantTypes("password")   // using the password flow in the url &grant_type=password
                 .scopes("um-web")                   // scope and autoApprove define
                 .autoApprove("um-web")
                 .accessTokenValiditySeconds(3600);  // live-tests generate new access token always
