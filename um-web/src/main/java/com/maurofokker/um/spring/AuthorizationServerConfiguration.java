@@ -22,6 +22,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         super();
     }
 
+    /*
+    For development is ok the inmemory token store but is better to use one that is persistent backed
+     */
     @Bean
     public TokenStore tokenStore() {
         return new InMemoryTokenStore();
@@ -29,6 +32,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     // config
 
+    /*
+    Wired of the authentication manager and tokenStore
+    To assure that the endpoint uses the token store as well the authentication manager
+     */
     @Override
     public void configure(final AuthorizationServerEndpointsConfigurer endpointsConfigurer) {
         endpointsConfigurer.tokenStore(tokenStore()).authenticationManager(authenticationManager);
@@ -38,12 +45,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
         // @formatter:off
         clients.inMemory()
-                .withClient("live-test")
-                .secret("H0l4MuNd0")
-                .authorizedGrantTypes("password")
-                .scopes("um-web")
+                .withClient("live-test")        // define a live-test (client id) client to work just with the live tests
+                .secret("H0l4MuNd0")                // working with a trusted client so define a psw,
+                .authorizedGrantTypes("password")   // using the password flow
+                .scopes("um-web")                   // scope and autoApprove define
                 .autoApprove("um-web")
-                .accessTokenValiditySeconds(3600);
+                .accessTokenValiditySeconds(3600);  // live-tests generate new access token always
         // @formatter:on
     }
 }
