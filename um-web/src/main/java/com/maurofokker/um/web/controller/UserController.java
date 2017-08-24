@@ -1,9 +1,11 @@
 package com.maurofokker.um.web.controller;
 
+import com.maurofokker.common.security.SpringSecurityUtil;
 import com.maurofokker.common.util.QueryConstants;
 import com.maurofokker.common.web.controller.AbstractController;
 import com.maurofokker.common.web.controller.ISortingController;
 import com.maurofokker.um.persistence.model.User;
+import com.maurofokker.um.security.UmUser;
 import com.maurofokker.um.service.IUserService;
 import com.maurofokker.um.util.Um;
 import com.maurofokker.um.util.UmMappings;
@@ -76,6 +78,22 @@ public class UserController extends AbstractController<User> implements ISorting
     @Secured(Um.Privileges.CAN_USER_READ)
     public User findOne(@PathVariable("id") final Long id, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findOneInternal(id, uriBuilder, response);
+    }
+
+    @RequestMapping(value = "/current", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured(Um.Privileges.CAN_USER_READ)
+    public User current() {
+        final UmUser currentUser = (UmUser) SpringSecurityUtil.getCurrentUserDetails();
+        if (currentUser == null) {
+            return null;
+        }
+        return findOneInternal(currentUser.getId());
+    }
+
+    @RequestMapping("/user")
+    public UmUser user(final UmUser user) {
+        return user;
     }
 
     // create

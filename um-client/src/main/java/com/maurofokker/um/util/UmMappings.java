@@ -2,6 +2,8 @@ package com.maurofokker.um.util;
 
 public final class UmMappings {
 
+    public static final String BASE = "/api/";
+
     public static final String USERS = "users";
     public static final String PRIVILEGES = "privileges";
     public static final String ROLES = "roles";
@@ -16,7 +18,7 @@ public final class UmMappings {
 
     }
 
-    public static final String AUTHENTICATION = "authentication";
+    public static final String AUTHENTICATION = "api/authentication";
 
     private UmMappings() {
         throw new AssertionError();

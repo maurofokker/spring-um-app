@@ -7,8 +7,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @ImportResource("classpath*:umContextConfig.xml")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @PropertySource({
-                    "classpath:env-${envTarget:dev}.properties",
-                    "classpath:web-${webTarget:local}.properties"
+                    "classpath:env-${envTarget:dev}.properties"
+                    //,"classpath:web-${webTarget:local}.properties"
                 })
 public class UmContextConfig {
 

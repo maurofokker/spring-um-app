@@ -6,7 +6,7 @@ import com.jayway.restassured.specification.RequestSpecification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ClientAuthenticationComponent implements ITestAuthenticator {
+public class ClientAuthenticationComponent implements ITestBasicAuthenticator {
 
     public ClientAuthenticationComponent() {
         super();

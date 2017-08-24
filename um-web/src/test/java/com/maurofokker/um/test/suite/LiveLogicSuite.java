@@ -5,6 +5,8 @@ import com.maurofokker.um.web.privilege.PrivilegeLogicRestLiveTest;
 import com.maurofokker.um.web.privilege.PrivilegeReadOnlyLogicRestLiveTest;
 import com.maurofokker.um.web.role.RoleLogicRestLiveTest;
 import com.maurofokker.um.web.role.RoleReadOnlyLogicRestLiveTest;
+import com.maurofokker.um.web.user.UserLogicRestLiveTest;
+import com.maurofokker.um.web.user.UserReadOnlyLogicRestLiveTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,6 +15,9 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ // @formatter:off
+        UserLogicRestLiveTest.class,
+        UserReadOnlyLogicRestLiveTest.class,
+
         PrivilegeLogicRestLiveTest.class,
         PrivilegeReadOnlyLogicRestLiveTest.class,
 

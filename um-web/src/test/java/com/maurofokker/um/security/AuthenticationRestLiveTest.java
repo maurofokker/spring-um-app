@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.maurofokker.common.spring.util.Profiles;
+import com.maurofokker.test.common.client.security.ITestAuthenticator;
 import com.maurofokker.um.client.UmPaths;
 import com.maurofokker.um.persistence.model.User;
 import com.maurofokker.um.spring.CommonTestConfig;
@@ -31,6 +32,9 @@ public class AuthenticationRestLiveTest {
 
     @Autowired
     private UmPaths paths;
+
+    @Autowired
+    private ITestAuthenticator auth;
 
     // tests
 
@@ -73,7 +77,8 @@ public class AuthenticationRestLiveTest {
     // util
 
     protected RequestSpecification givenAuthenticated() {
-        return RestAssured.given().auth().preemptive().basic(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
+        //return RestAssured.given().auth().preemptive().basic(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
+        return auth.givenAuthenticated(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
     }
 
 }
