@@ -47,13 +47,6 @@ public final class RoleSimpleLiveTest {
     @Autowired
     private RoleSimpleApiClient api;
 
-    /*@Override
-    @Test
-    @Ignore("operation not supported")
-    public final void whenResourceIsCreated_then201IsReceived() {
-
-    }*/
-
     // find - one
 
     @Test
