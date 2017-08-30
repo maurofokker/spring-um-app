@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -21,6 +24,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     // injecting the sign-in key using the Value annotation and providing the default value if we
     // ever want to configure externally
@@ -63,6 +69,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         return new JwtTokenStore(accessTokenConverter());
     }
 
+    @Bean
+    @Primary  //info: set as primary bc spring has 1 too and now we explicitly set to use this one
+    public DefaultTokenServices tokenServices() {
+        final DefaultTokenServices tokenServices = new DefaultTokenServices();
+        tokenServices.setTokenStore(tokenStore());
+        tokenServices.setSupportRefreshToken(true);
+        return tokenServices;
+    }
     // config
 
     /*
@@ -75,6 +89,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         endpointsConfigurer
                 .tokenStore(tokenStore())
                 .authenticationManager(authenticationManager)
+                .userDetailsService(userDetailsService) // info: need to set the userDetailsService to the config endpoint
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                 .accessTokenConverter(accessTokenConverter()); // info: final config pointing to the same token covnerter above
         // @formatter:on
@@ -86,9 +101,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients.inMemory()
                 .withClient("live-test")     // define a live-test (client id) client to work just with the live tests, used to hit token api
                 .secret("H0l4MuNd0")                // working with a trusted client so define a psw,
-                .authorizedGrantTypes("password")   // using the password flow in the url &grant_type=password
+                .authorizedGrantTypes("password", "refresh_token")   // using the password flow in the url &grant_type=password and adding "refresh_token for grant type
+                .refreshTokenValiditySeconds(3600 * 24)  // refresh token valid for 24 hours
                 .scopes("um-web", "read", "write", "trust")                   // scope and autoApprove define
-                .autoApprove("um-web")
                 .autoApprove("um-web")
                 .accessTokenValiditySeconds(3600)  // live-tests generate new access token always
                 //
@@ -96,7 +111,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 //
                 .withClient("um")
                 .secret("VXB0YWtlLUlyb24h")
-                .authorizedGrantTypes("password")
+                .authorizedGrantTypes("password", "refresh_token")
+                .refreshTokenValiditySeconds(3600 * 24)
                 .scopes("um-web", "read", "writes", "trust")
                 .autoApprove("um-web")
                 .accessTokenValiditySeconds(3600)
