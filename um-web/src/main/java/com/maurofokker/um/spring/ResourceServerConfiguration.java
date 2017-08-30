@@ -29,6 +29,14 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     Transition from basic auth (UmJavaSecurityConfig.class) to OAuth (this class) is simple and not require to much work
      */
 
+    /*
+    info: because this is a single project there is no need to configure JwtAccessTokenConverter here (authorization server
+    and resource server are living in the same spring context). In case the authorization and resource server were define
+    separated, in this file (ResourceServerConfiguration) we must implement JwtAccessTokenConverter with the same sign-in key
+    than the Authorization Server
+    info 2: without configuration here the resource server is fine understanding Jwt Tokens signed by the authorization server
+     */
+
     @Autowired
     private UserDetailsService userDetailsService;
 
