@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -74,6 +75,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         endpointsConfigurer
                 .tokenStore(tokenStore())
                 .authenticationManager(authenticationManager)
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
                 .accessTokenConverter(accessTokenConverter()); // info: final config pointing to the same token covnerter above
         // @formatter:on
     }
@@ -85,9 +87,20 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .withClient("live-test")     // define a live-test (client id) client to work just with the live tests, used to hit token api
                 .secret("H0l4MuNd0")                // working with a trusted client so define a psw,
                 .authorizedGrantTypes("password")   // using the password flow in the url &grant_type=password
-                .scopes("um-web")                   // scope and autoApprove define
+                .scopes("um-web", "read", "write", "trust")                   // scope and autoApprove define
                 .autoApprove("um-web")
-                .accessTokenValiditySeconds(3600);  // live-tests generate new access token always
+                .autoApprove("um-web")
+                .accessTokenValiditySeconds(3600)  // live-tests generate new access token always
+                //
+                .and()
+                //
+                .withClient("um")
+                .secret("VXB0YWtlLUlyb24h")
+                .authorizedGrantTypes("password")
+                .scopes("um-web", "read", "writes", "trust")
+                .autoApprove("um-web")
+                .accessTokenValiditySeconds(3600)
+                ;
         // @formatter:on
     }
 }
