@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
@@ -118,5 +119,16 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .accessTokenValiditySeconds(3600)
                 ;
         // @formatter:on
+    }
+
+    /*
+    To enable an endpoint to check access tokens once get one from the authorization server
+    permitAll() means that the endpoint is gonna be public this is not the best way but is a proof of concept
+    we could use "Is authenticated" instead
+     */
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.checkTokenAccess("permitAll()");
+        super.configure(security);
     }
 }
