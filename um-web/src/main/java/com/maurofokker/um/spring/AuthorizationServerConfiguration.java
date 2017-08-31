@@ -75,7 +75,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public DefaultTokenServices tokenServices() {
         final DefaultTokenServices tokenServices = new DefaultTokenServices();
         tokenServices.setTokenStore(tokenStore());
-        tokenServices.setSupportRefreshToken(true);
+        tokenServices.setSupportRefreshToken(true); // enable refresh tokens
         return tokenServices;
     }
     // config
