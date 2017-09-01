@@ -1,4 +1,5 @@
-angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider) {
+angular.module('hello', [ 'ngResource', 'ngRoute' ]).config(function($routeProvider, $httpProvider) {
+//angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider) {
 
     $routeProvider.when('/', {
         templateUrl : 'home.html',
@@ -9,6 +10,11 @@ angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider) {
     }).otherwise('/');
 
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    /*
+    $httpProvider.defaults.headers.common['Access-Control-Allow-Origin'] = "*";
+    $httpProvider.defaults.headers.common['Access-Control-Allow-Methods'] = "GET,PUT,POST,DELETE,OPTIONS";
+    $httpProvider.defaults.headers.common['Access-Control-Allow-Headers'] = "Content-Type, Authorization, Content-Length, X-Requested-With";
+    */
 
 }).controller('navigation',
 
@@ -69,31 +75,31 @@ angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider) {
                 }
             })
         };
-}).controller('home', function($scope, $http, $window) {
-            var headers = {
-                "Accept" : "application/json",
-                authorization : "Bearer " + $window.sessionStorage.accessToken  // send access token
-            };
-
-            $http.get("http://localhost:8086/um-web/api/roles/1", {
-                headers : headers
-            }).success(function(data) {
-                $scope.role = data;
-            })
-});
-
-    /*
-    // with basic auth
-    .controller('home', function($scope, $http, $window) {
+    }).controller('home', function($scope, $http, $window) {
     var headers = {
         "Accept" : "application/json",
-        //"Authorization" : "Basic dXNlckBmYWtlLmNvbTp1c2VycGFzcw==",
+        authorization : "Bearer " + $window.sessionStorage.accessToken  // send access token
     };
-    
-    $http.get("http://localhost:8086/api/roles/7", {
+
+    $http.get("http://localhost:8086/um-web/api/roles/1", {
         headers : headers
     }).success(function(data) {
         $scope.role = data;
     })
 });
-*/
+
+/*
+ // with basic auth
+ .controller('home', function($scope, $http, $window) {
+ var headers = {
+ "Accept" : "application/json",
+ //"Authorization" : "Basic dXNlckBmYWtlLmNvbTp1c2VycGFzcw==",
+ };
+
+ $http.get("http://localhost:8086/api/roles/7", {
+ headers : headers
+ }).success(function(data) {
+ $scope.role = data;
+ })
+ });
+ */
