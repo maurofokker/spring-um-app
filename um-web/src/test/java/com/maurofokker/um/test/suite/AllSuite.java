@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ServiceSuite.class })
+@SuiteClasses({ LiveSuite.class, ServiceSuite.class })
 public final class AllSuite {
     //
 }

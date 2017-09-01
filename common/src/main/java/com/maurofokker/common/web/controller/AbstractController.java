@@ -34,6 +34,7 @@ public abstract class AbstractController<T extends IEntity> extends AbstractRead
         RestPreconditions.checkRequestElementNotNull(resource);
         RestPreconditions.checkRequestElementNotNull(resource.getId());
         RestPreconditions.checkIfBadRequest(resource.getId() == id, resource.getClass().getSimpleName() + "id and the URI id don't match");
+        RestPreconditions.checkRequestState(resource.getId() == id);
         RestPreconditions.checkNotNull(getService().findOne(resource.getId()));
 
         getService().update(resource);

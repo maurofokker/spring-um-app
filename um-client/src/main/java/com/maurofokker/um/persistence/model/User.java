@@ -5,9 +5,11 @@ import com.maurofokker.common.persistence.model.INameableEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
 
 @Entity
+@XmlRootElement
 public class User implements INameableEntity, INameableDto {
 
     @Id
@@ -47,13 +49,13 @@ public class User implements INameableEntity, INameableDto {
         roles = rolesToSet;
     }
 
-    public User(final User userDto) {
+    public User(final String name, final String email, final String password, final Set<Role> roles) {
         super();
 
-        name = userDto.getName();
-        email = userDto.getEmail();
-        password = userDto.getPassword();
-        roles = userDto.getRoles();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
     // API

@@ -28,7 +28,7 @@ public class UmServletConfig {
     // configuracion similar al web.xml
     @Bean
     public ServletRegistrationBean dispatcherServletRegistration() {
-        final ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/api/*");
+        final ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/*");
 
         final Map<String, String> params = new HashMap<String, String>();
         params.put("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
@@ -54,10 +54,11 @@ public class UmServletConfig {
     }
     */
 
+    /*
     // INFO this is for relaxing CORS filter because rest server is running in different port than ui
     @Bean
     public SimpleCorsFilter simpleCorsFilter() {
         return new SimpleCorsFilter();
     }
-
+    */
 }

@@ -12,6 +12,8 @@
 	<logger name="org.springframework" level="WARN" />
 	<logger name="org.springframework.transaction" level="WARN" />
 	<logger name="org.springframework.security" level="WARN" /> <!-- to debug security related issues (DEBUG) -->
+	<logger name="org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter" level="ERROR" /> <!-- stop showing a warn message that should be ignored -->
+
 	<logger name="org.springframework.web.servlet.mvc" level="WARN" /> <!-- some serialization issues are at trace level here: org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod -->
 
 	<!-- our service -->

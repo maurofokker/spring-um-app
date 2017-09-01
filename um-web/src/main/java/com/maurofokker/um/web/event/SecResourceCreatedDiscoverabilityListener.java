@@ -1,6 +1,7 @@
 package com.maurofokker.um.web.event;
 
 import com.maurofokker.common.web.listeners.ResourceCreatedDiscoverabilityListener;
+import com.maurofokker.um.util.UmMappings;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,6 @@ public class SecResourceCreatedDiscoverabilityListener extends ResourceCreatedDi
 
     @Override
     protected String getBase() {
-        return "/";
+        return UmMappings.BASE;
     }
 }

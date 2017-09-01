@@ -20,7 +20,7 @@ import java.util.Map;
  * Created by mgaldamesc on 25-07-2017.
  */
 @SpringBootApplication(exclude = { // @formatter:off
-        SecurityAutoConfiguration.class,
+        //SecurityAutoConfiguration.class,
         ErrorMvcAutoConfiguration.class
 }) // @formatter:on
 /*
@@ -43,9 +43,13 @@ public class UmApp extends SpringBootServletInitializer {
             UmServiceConfig.class,
             UmWebConfig.class,
             UmServletConfig.class,
-            UmJavaSecurityConfig.class,
 
-            UmApp.class
+            //UmJavaSecurityConfig.class, // info: basic auth
+
+            UmApp.class,
+
+            ResourceServerConfiguration.class,
+            AuthorizationServerConfiguration.class
     }; // @formatter:on
 
     // Trae toda la configuracion al cargar el UmApp que carga el resto de configuraciones

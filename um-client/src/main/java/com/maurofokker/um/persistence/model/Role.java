@@ -6,11 +6,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @Entity
+@XmlRootElement
 public class Role implements INameableEntity, INameableDto {
 
     @Id

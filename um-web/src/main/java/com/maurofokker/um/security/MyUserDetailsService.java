@@ -5,7 +5,6 @@ import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
-import com.maurofokker.um.persistence.model.Principal;
 import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.service.IUserService;
@@ -30,7 +29,7 @@ import java.util.Set;
 public final class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private IUserService principalService;
+    private IUserService userService;
 
     public MyUserDetailsService() {
         super();
@@ -43,12 +42,12 @@ public final class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Preconditions.checkNotNull(username);
 
-        final com.maurofokker.um.persistence.model.User principal = principalService.findByName(username);
-        if (principal == null) {
+        final com.maurofokker.um.persistence.model.User user = userService.findByName(username);
+        if (user == null) {
             throw new UsernameNotFoundException("Username was not found: " + username);
         }
 
-        final Set<Role> rolesOfUser = principal.getRoles();
+        final Set<Role> rolesOfUser = user.getRoles();
         final Set<Privilege> privileges = Sets.newHashSet();
         for (final Role roleOfUser : rolesOfUser) {
             privileges.addAll(roleOfUser.getPrivileges());
@@ -58,6 +57,7 @@ public final class MyUserDetailsService implements UserDetailsService {
         final String[] roleStringsAsArray = rolesToString.toArray(new String[rolesToString.size()]);
         final List<GrantedAuthority> auths = AuthorityUtils.createAuthorityList(roleStringsAsArray);
 
-        return new User(principal.getName(), principal.getPassword(), auths);
+        //return new User(user.getName(), user.getPassword(), auths);
+        return new UmUser(user.getName(), user.getPassword(), auths, user.getId());
     }
 }

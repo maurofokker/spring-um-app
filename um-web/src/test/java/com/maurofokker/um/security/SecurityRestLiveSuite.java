@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.maurofokker.common.spring.util.Profiles;
+import com.maurofokker.test.common.client.security.ITestAuthenticator;
 import com.maurofokker.um.client.template.UserRestClient;
 import com.maurofokker.um.model.UserDtoOpsImpl;
 import com.maurofokker.um.spring.CommonTestConfig;
@@ -38,6 +39,9 @@ public class SecurityRestLiveSuite {
 
     @Autowired
     private UserDtoOpsImpl userOps;
+
+    @Autowired
+    private ITestAuthenticator auth;
 
     // tests
 
@@ -81,6 +85,7 @@ public class SecurityRestLiveSuite {
     // util
 
     protected final RequestSpecification givenAuthenticated() {
-        return RestAssured.given().auth().preemptive().basic(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
+        //return RestAssured.given().auth().preemptive().basic(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
+        return auth.givenAuthenticated(Um.ADMIN_EMAIL, Um.ADMIN_PASS);
     }
 }

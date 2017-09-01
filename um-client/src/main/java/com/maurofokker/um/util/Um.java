@@ -40,8 +40,8 @@ public final class Um {
 
         /** A placeholder role for administrator. */
         public static final String ROLE_ADMIN = "ROLE_ADMIN";
-        /** A placeholder role for enduser. */
-        public static final String ROLE_USER = "ROLE_ENDUSER";
+        /** A placeholder role for user. */
+        public static final String ROLE_USER = "ROLE_USER";
 
     }
 
