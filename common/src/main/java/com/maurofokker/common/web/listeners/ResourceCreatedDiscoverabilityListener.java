@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by mgaldamesc on 03-08-2017.
  */
-
+/*
+Discoverability listener or HATEOAS listener meant for resource creation
+ */
 public abstract class ResourceCreatedDiscoverabilityListener implements ApplicationListener<AfterResourceCreatedEvent> {
 
     @Autowired
@@ -29,6 +31,10 @@ public abstract class ResourceCreatedDiscoverabilityListener implements Applicat
     public final void onApplicationEvent(final AfterResourceCreatedEvent ev) {
         Preconditions.checkNotNull(ev);
 
+        /*
+        extract information from the event and then add the new location header in method
+        addLinkHeaderOnEntityCreation
+         */
         final String idOfNewResource = ev.getIdOfNewResource();
         addLinkHeaderOnEntityCreation(ev.getUriBuilder(), ev.getResponse(), idOfNewResource, ev.getClazz());
     }
@@ -40,9 +46,24 @@ public abstract class ResourceCreatedDiscoverabilityListener implements Applicat
         final String path = calculatePathToResource(clazz);
         final String locationValue = uriBuilder.path(path).build().expand(idOfNewEntity).encode().toUriString();
 
+        /*
+        INFO
+        we have full flexibility of providing any kind of mapping here. In a complex API we could do a one-to-one mapping,
+        and more complex heuristics, anything we want as long as we can calculate that mapping, and we can because we are
+        controlling the API and we know what our URLs are so we can DO the next setHeader
+         */
         response.setHeader(org.springframework.http.HttpHeaders.LOCATION, locationValue);
+        /*
+        INFO for a client side is useful to have this kind of information
+         */
     }
 
+    /**
+     * Calculate path of resource based on some conventions
+     * - assuming that the right URL is going to have the name of the resource class
+     * @param clazz
+     * @return
+     */
     protected String calculatePathToResource(final Class clazz) {
         final String resourceName = uriMapper.getUriBase(clazz);
         final String path = getBase() + resourceName + "/{id}";
