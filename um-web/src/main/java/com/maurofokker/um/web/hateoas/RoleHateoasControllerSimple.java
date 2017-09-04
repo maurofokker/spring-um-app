@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = UmMappings.Hateoas.ROLES)
+// @RequestMapping(value = UmMappings.Hateoas.ROLES) // commented bc implementation more advaced config in RoleHateoasController
 public class RoleHateoasControllerSimple {
 
     @Autowired
