@@ -21,7 +21,17 @@ public abstract class AbstractController<T extends IEntity> extends AbstractRead
         RestPreconditions.checkRequestElementNotNull(resource);
         RestPreconditions.checkRequestState(resource.getId() == null);
         final T existingResource = getService().create(resource);
-        // - note: mind the autoboxing and potential NPE when the resource has null id at this point (likely when working with DTOs)
+
+        // - info: mind the autoboxing and potential NPE when the resource has null id at this point (likely when working with DTOs)
+        /*
+        Simple generic event that can be used as a hook and to wich it can be tie any sort of logic, sending:
+        - the class (clazz) of the DTO created
+        - the URI builder
+        - the response
+        - the ID of the new resource
+        * Is sending simple information, but the right one to start adding metadata to the response, which is why response is added
+        * This helps to implement HATEOAS
+         */
         eventPublisher.publishEvent(new AfterResourceCreatedEvent<T>(clazz, uriBuilder, response, existingResource.getId().toString()));
     }
 
