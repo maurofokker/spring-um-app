@@ -9,6 +9,7 @@ import com.maurofokker.um.security.UmUser;
 import com.maurofokker.um.service.IUserService;
 import com.maurofokker.um.util.Um;
 import com.maurofokker.um.util.UmMappings;
+import com.maurofokker.um.web.version.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -120,6 +121,15 @@ public class UserController extends AbstractController<User> implements ISorting
     @Secured(Um.Privileges.CAN_USER_WRITE)                          // method level security
     public void delete(@PathVariable("id") final Long id) {
         deleteByIdInternal(id);
+    }
+
+    // count versioned
+    @Version(1)
+    @RequestMapping(method = RequestMethod.GET, value = "/countv")
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    public long countWithVersion() {
+        return countInternal();
     }
 
     // Spring
