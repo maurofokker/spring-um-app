@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = UmMappings.PRIVILEGES)
@@ -58,10 +59,21 @@ public class PrivilegeController extends AbstractController<Privilege> implement
         return findAllSortedInternal(sortBy, sortOrder);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    /**
+     Changing the URL of an existing Resource
+     i.e changing resources url, privileges can become only accessible via their role:
+     - /api/privileges
+     - /api/roles/7/privileges
+
+     _ because the use of two values in request mapping is not possible to use @PathVariable("roleId") final String roleId
+     _ because @PathVariable does not have an optional, and in this case it should be optional bc one of the mappings has it and the other doesnt
+     _ A workaround is to replace the string for a Map, and in this way we have the option to inject this path variables
+     _ and once we inject them its trivial to use in the actual implementation
+     */
+    @RequestMapping(value = { UmMappings.Plural.PRIVILEGES, "roles/{roleId}/privileges" }, method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
-    public List<Privilege> findAll(final HttpServletRequest request, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+    public List<Privilege> findAll(@PathVariable final Map<String, String> pathVariables, final HttpServletRequest request, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findAllInternal(request, uriBuilder, response);
     }
 
