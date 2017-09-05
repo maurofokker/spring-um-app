@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = UmMappings.PRIVILEGES)
-public class PrivilegeController extends AbstractController<Privilege> implements ISortingController<Privilege> {
+@RequestMapping(value = UmMappings.Plural.PRIVILEGES)
+public class PrivilegeController extends AbstractController<Privilege, Privilege> implements ISortingController<Privilege> {
 
     @Autowired
     private IPrivilegeService service;
@@ -74,6 +74,13 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @ResponseBody
     @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
     public List<Privilege> findAll(@PathVariable final Map<String, String> pathVariables, final HttpServletRequest request, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
+        return findAllInternal(request, uriBuilder, response);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
+    public List<Privilege> findAll(final HttpServletRequest request, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findAllInternal(request, uriBuilder, response);
     }
 

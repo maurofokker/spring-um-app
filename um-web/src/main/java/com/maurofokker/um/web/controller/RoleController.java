@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = UmMappings.ROLES)
-public class RoleController extends AbstractController<Role> implements ISortingController<Role> {
+@RequestMapping(value = UmMappings.Plural.ROLES)
+public class RoleController extends AbstractController<Role, Role> implements ISortingController<Role> {
 
     @Autowired
     private IRoleService service;

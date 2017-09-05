@@ -22,8 +22,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = UmMappings.USERS)
-public class UserController extends AbstractController<User> implements ISortingController<User> {
+@RequestMapping(value = UmMappings.Plural.USERS)
+public class UserController extends AbstractController<User, User> implements ISortingController<User> {
 
     @Autowired
     private IUserService service;
