@@ -61,6 +61,13 @@
 			<classifier>tests</classifier>
 		</dependency>
 
+		<!-- ops -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<!-- web -->
 
 		<dependency>
