@@ -65,6 +65,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         // @formatter:off
         http
                 .authorizeRequests()
+                //.antMatchers("/api/health").anonymous()
                 .anyRequest().authenticated()       // secure everything
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
