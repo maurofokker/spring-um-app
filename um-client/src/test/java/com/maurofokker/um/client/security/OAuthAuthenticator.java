@@ -61,13 +61,26 @@ public class OAuthAuthenticator implements ITestAuthenticator {
             final HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Basic " + encodedCredentials);
 
+            // full request, headers + query string
             final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
 
+            // http://localhost:8086/um-web/oauth/token?grant_type=password&client_id=live-test&username=admin@fake.com&password=adminpass
+            // rest template to hit token api with post method
             final RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 
             final TokenResponse tokenResponse = restTemplate.postForObject(url, request, TokenResponse.class);
             final String accessToken = tokenResponse.getAccessToken();
+            /*
+            response of type
+            {
+                "access_token": "e36e2740-2431-40f0-a452-eb58cbf9fc58",
+                "token_type": "bearer",
+                "expires_in": 3599,
+                "scope": "um-web"
+            }
+             */
+
             return accessToken;
         } catch (final HttpClientErrorException e) {
             log.warn("", e);
