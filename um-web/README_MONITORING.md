@@ -194,3 +194,40 @@ final class MetricsExporter {
     }
 }
 ```
+
+##### Dropwizard metric exporter
+* Maven dependency
+```xml
+<dependency>
+    <groupId>io.dropwizard.metrics</groupId>
+    <artifactId>metrics-core</artifactId>
+</dependency>
+```
+
+* Spring boot integrates MetricRegistry from this library in a clean way so all we need to do is to include in the classpath
+```java
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.MetricRegistry;
+
+@Component
+final class MetricsExporterDropwizard {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private MetricRegistry metricRegistry;
+
+    @Scheduled(fixedRate = 1000 * 30) // every 30 second
+    public void exportMetrics() {
+        final SortedMap<String, Counter> counters = metricRegistry.getCounters(); // counters indicators
+        final SortedMap<String, Gauge> gauges = metricRegistry.getGauges(); // metrics indicators
+        counters.forEach(this::log);
+
+    }
+
+    private void log(String counterName, final Counter m) {
+        logger.info("Reporting metric {}={}", counterName, m.getCount());
+    }
+}
+```
