@@ -87,6 +87,12 @@ management.security.enabled=false
 }
 ```
 
+### Documentation
+[http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#production-ready]
+[https://spring.io/guides/gs/actuator-service/]
+[http://www.baeldung.com/spring-boot-actuators]
+
+
 ### Custom Health Check
 * The purpose is to allow us to make our own decision whether or not the API is up and running or is down
     * check of persistence layer and make sure is ok
@@ -274,3 +280,51 @@ final class MetricsExporterDropwizard {
     }
 }
 ```
+#### Documentation
+[http://www.baeldung.com/spring-boot-actuators]
+[http://kielczewski.eu/2015/01/application-metrics-with-spring-boot-actuator/]
+[https://dropwizard.github.io/metrics/3.1.0/]
+
+### Monitoring data over JMX
+* allows to see low level app information
+* can see where bottlenecks are when performing jmeter tests
+
+#### Using Java VisualVM
+* run from .../Java/JDK.1.8_xxx/bin/jvisualvm
+* use plugins from https://visualvm.github.io/pluginscenters.html
+* download and install [https://visualvm.github.io/archive/downloads/release136/com-sun-tools-visualvm-modules-mbeans_1.nbm]
+* connect visualvm to tomcat app running or another server
+
+#### Monitoring a remote Tomcat server
+* this should be done on server where tomcat is installed
+* add the JMX listener to the Tomcat config:
+``` 
+sudo vim $TOMCAT_INSTALL_DIR/tomcat/conf/server.xml
+```
+```xml
+<Listener className="org.apache.catalina.mbeans.JmxRemoteLifecycleListener" rmiRegistryPortPlatform="10001" rmiServerPortPlatform="10002"/>
+```
+* download the JMX jar into the Tomcat lib directory:
+```
+cd $TOMCAT_INSTALL_DIR/tomcat/lib
+wget http://apache.javapipe.com/tomcat/tomcat-8/v8.0.30/bin/extras/catalina-jmx-remote.jar
+sudo chmod a+rwx catalina-jmx-remote.jar
+```
+
+* Configure the runtime
+```
+export CATALINA_OPTS="-Xms512m -Xmx1024m -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=<dns_host>"
+```
+
+* configurations in VisualVM to monitor remote tomcat
+    * add a remote connection, with just the host (dns_host)
+    * add the full JMX connection:
+    ```
+    service:jmx:rmi://dns_host:10002/jndi/rmi://dns_host:10001/jmxrmi
+    ```
+
+#### Documentation
+[https://visualvm.java.net/]
+[https://visualvm.java.net/mbeans_tab.html]
+[https://visualvm.java.net/jmx_connections.html]
+[https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-jmx.html]
