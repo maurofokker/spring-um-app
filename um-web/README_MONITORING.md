@@ -328,3 +328,36 @@ export CATALINA_OPTS="-Xms512m -Xmx1024m -Dcom.sun.management.jmxremote=true -Dc
 [https://visualvm.java.net/mbeans_tab.html]
 [https://visualvm.java.net/jmx_connections.html]
 [https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-jmx.html]
+
+### Controller to expose metrics data over http
+* create a controller
+* use the already available spring boot data in service
+* this metric will conflict with MetricsExporterDropwizard (should comment this class and maven dependency)
+* implementation of controller metric is in package `com.maurofokker.common.metric`
+* use of api
+``` 
+GET http://localhost:8086/um-web/metric-graph-data
+Headers:
+    Authorizarion: Bearer <token>
+```
+
+```json
+[
+    [
+        "Time",
+        "200"
+    ],
+    [
+        "2017-09-06 15:07",
+        0
+    ],
+    [
+        "2017-09-06 15:08",
+        3
+    ],
+    [
+        "2017-09-06 15:09",
+        0
+    ]
+]
+```
