@@ -142,3 +142,18 @@ Header:
     }
 }
 ```
+
+### Metrics
+#### Track custom metrics
+* Inject CounterService from spring boot actuator to increment the reading of the metrics we're tracking (by key).
+* Increment of key "service.privilege.findByName" the syntax is layer.type_of_data_working_on.operation
+* The syntax is a string and could be anything but this is a clean way to track data
+* This could be done in the controller layer, also in the service layer, is possible to track any sort of metric
+* Apply increment in method
+```java
+    @Override
+    public Privilege findByName(final String name) {
+        counterService.increment("service.privilege.findByName");
+        return getDao().findByName(name);
+    }
+```
