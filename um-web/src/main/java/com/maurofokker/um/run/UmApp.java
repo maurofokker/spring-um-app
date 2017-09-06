@@ -44,6 +44,8 @@ public class UmApp extends SpringBootServletInitializer {
             UmWebConfig.class,
             UmServletConfig.class,
 
+            UmMetricConfig.class,
+
             //UmJavaSecurityConfig.class, // info: basic auth
 
             UmApp.class,
