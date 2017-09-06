@@ -158,6 +158,49 @@ Header:
     }
 ```
 
+* see custom metric `service.privilege.findByName`
+```
+GET http://localhost:8086/um-web/management/metrics
+HEaders:
+    Authorization: Bearer <token_
+```
+```json
+{
+    "mem": 607885,
+    "mem.free": 453985,
+    "processors": 4,
+    "instance.uptime": 32013,
+    "uptime": 46002,
+    "systemload.average": -1,
+    "heap.committed": 526848,
+    "heap.init": 131072,
+    "heap.used": 72862,
+    "heap": 1842688,
+    "nonheap.committed": 82520,
+    "nonheap.init": 2496,
+    "nonheap.used": 81042,
+    "nonheap": 0,
+    "threads.peak": 33,
+    "threads.daemon": 28,
+    "threads.totalStarted": 63,
+    "threads": 31,
+    "classes": 12112,
+    "classes.loaded": 12112,
+    "classes.unloaded": 0,
+    "gc.ps_scavenge.count": 13,
+    "gc.ps_scavenge.time": 350,
+    "gc.ps_marksweep.count": 3,
+    "gc.ps_marksweep.time": 477,
+    "counter.status.503.management.health": 1,
+    "gauge.response.management.health": 33,
+    "counter.service.privilege.findByName": 12,
+    "counter.status.200.oauth.token": 1,
+    "gauge.response.oauth.token": 674,
+    "httpsessions.max": -1,
+    "httpsessions.active": 0
+}
+```
+
 #### Metrics exporter
 ##### Simple metric exporter
 * Simple metrics exporter that export data into an external system
