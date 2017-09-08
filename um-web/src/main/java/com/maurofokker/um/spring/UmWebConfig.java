@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @ComponentScan({ "com.maurofokker.um.web", "com.maurofokker.common.web" })
 @EnableWebMvc
 @EnableSwagger2
+@EnableAspectJAutoProxy
 public class UmWebConfig extends WebMvcConfigurerAdapter {
     /***
      * Notes:
