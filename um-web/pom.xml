@@ -77,6 +77,13 @@
 
 		<!-- web -->
 
+		<!-- Kryo Http Message Converter to user binary formats-->
+		<dependency>
+			<groupId>com.esotericsoftware</groupId>
+			<artifactId>kryo</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
