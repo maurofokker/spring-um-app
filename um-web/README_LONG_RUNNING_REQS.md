@@ -30,8 +30,40 @@ public Callable<User> createUserWithCallable(@RequestBody @Valid final User reso
     5. when processing is done, the result is going to be dispatched back to the container to finish and return to the client
 
 #### DeferredResult
-* Same as callable
 * Is the Spring alternative for Callable
+* Same as Callable in terms that client thread is still blocked and servlet container thread not
+* But it gives more control in setting the value of the deferred result
+* Full control over when and how processing will happen
+* Gives more flexibility as to when we can call the set result on our DeferredResult and how we can
+* handle all of that processing
+* controller to handle deferred result implementation
+```java
+@RequestMapping(value = "/deferred", method = RequestMethod.POST)
+@ResponseStatus(HttpStatus.CREATED)
+@ResponseBody
+public DeferredResult<User> createUserWithDeferredResult(@RequestBody final User resource) {
+    final DeferredResult<User> result = new DeferredResult<User>();
+    asyncService.scheduleCreateUser(resource, result);
+    return result;
+}
+```
+* Break it down api hit:
+    1. create our deferred result
+    2. pass that into the service
+    3. return it - so that the container thread can exit right away
+
+* Service that control processing
+```java
+public void scheduleCreateUser(User resource, DeferredResult<User> deferredResult) {
+    /**
+     * supllyAsync() to run createSlow() operation asynchronously
+     * whenCompleteAsync() to passing in the action when the processing finishes
+     * when processing finishes set result in DeferredResult
+     * info this is the extra control that gives DeferredResult
+     */
+    CompletableFuture.supplyAsync(() -> userService.createSlow(resource)).whenCompleteAsync((result, throwable) -> deferredResult.setResult(result));
+}
+```
 
 #### @Async
 * Truly async implementation

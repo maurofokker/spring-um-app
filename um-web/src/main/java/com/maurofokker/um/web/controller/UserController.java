@@ -6,6 +6,7 @@ import com.maurofokker.common.web.controller.AbstractController;
 import com.maurofokker.common.web.controller.ISortingController;
 import com.maurofokker.um.persistence.model.User;
 import com.maurofokker.um.security.UmUser;
+import com.maurofokker.um.service.AsyncService;
 import com.maurofokker.um.service.IUserService;
 import com.maurofokker.um.util.Um;
 import com.maurofokker.um.util.UmMappings;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,9 @@ public class UserController extends AbstractController<User> implements ISorting
 
     @Autowired
     private IUserService service;
+
+    @Autowired
+    private AsyncService asyncService;
 
     public UserController() {
         super(User.class);
@@ -107,6 +112,7 @@ public class UserController extends AbstractController<User> implements ISorting
 
     /**
      * This will keep client thread blocked but container thread not
+     * Processing is handle by it self and managed by spring mvc
      *
      */
     @RequestMapping(value = "/callable", method = RequestMethod.POST)
@@ -119,6 +125,22 @@ public class UserController extends AbstractController<User> implements ISorting
                 return service.createSlow(resource);
             }
         };
+    }
+
+    /**
+     * Same as Callable in terms that client thread is still blocked and servlet container thread not
+     * But it gives more control in setting the value of the deferred result
+     * Full control over when and how processing will happen
+     * Gives more flexibility as to when we can call the set result on our DeferredResult and how we can
+     * handle all of that processing
+     */
+    @RequestMapping(value = "/deferred", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public DeferredResult<User> createUserWithDeferredResult(@RequestBody final User resource) {
+        final DeferredResult<User> result = new DeferredResult<User>();
+        asyncService.scheduleCreateUser(resource, result);
+        return result;
     }
 
     // update
