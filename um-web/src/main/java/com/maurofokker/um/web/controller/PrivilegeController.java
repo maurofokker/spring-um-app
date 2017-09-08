@@ -7,6 +7,7 @@ import com.maurofokker.um.persistence.model.Privilege;
 import com.maurofokker.um.service.IPrivilegeService;
 import com.maurofokker.um.util.Um;
 import com.maurofokker.um.util.UmMappings;
+import com.maurofokker.um.web.limit.RateLimit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -70,6 +71,7 @@ public class PrivilegeController extends AbstractController<Privilege> implement
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     @Secured(Um.Privileges.CAN_PRIVILEGE_READ)
+    @RateLimit(1)
     public Privilege findOne(@PathVariable("id") final Long id, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         return findOneInternal(id, uriBuilder, response);
     }
