@@ -3,6 +3,7 @@ package com.maurofokker.um.service.impl;
 import com.maurofokker.common.persistence.service.AbstractService;
 import com.maurofokker.um.persistence.dao.IUserJpaDao;
 import com.maurofokker.um.persistence.model.User;
+import com.maurofokker.um.service.AsyncService;
 import com.maurofokker.um.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -25,6 +26,22 @@ public class UserServiceImpl extends AbstractService<User> implements IUserServi
     public User findByName(final String name) {
         return dao.findByName(name);
     }
+
+    // create
+
+    /**
+     * simulate slow operation
+     */
+    @Override
+    public User createSlow(User user) {
+        try {
+            Thread.sleep(AsyncService.DELAY); // delay 10 seconds
+            return create(user);               // delegate to the actual create op
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     // Spring
 

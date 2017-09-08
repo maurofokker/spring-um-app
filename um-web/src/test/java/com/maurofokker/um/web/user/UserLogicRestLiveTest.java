@@ -1,8 +1,12 @@
 package com.maurofokker.um.web.user;
 
 import com.google.common.collect.Sets;
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 import com.maurofokker.client.IDtoOperations;
+import com.maurofokker.client.marshall.IMarshaller;
+import com.maurofokker.test.common.client.security.ITestAuthenticator;
 import com.maurofokker.um.client.FixtureResourceFactory;
 import com.maurofokker.um.client.template.RoleRestClient;
 import com.maurofokker.um.client.template.UserRestClient;
@@ -10,17 +14,20 @@ import com.maurofokker.um.model.RoleDtoOpsImpl;
 import com.maurofokker.um.model.UserDtoOpsImpl;
 import com.maurofokker.um.persistence.model.Role;
 import com.maurofokker.um.persistence.model.User;
+import com.maurofokker.um.service.AsyncService;
 import com.maurofokker.um.test.live.UmLogicRestLiveTest;
+import com.maurofokker.um.util.Um;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class UserLogicRestLiveTest extends UmLogicRestLiveTest<User> {
 
@@ -34,6 +41,12 @@ public class UserLogicRestLiveTest extends UmLogicRestLiveTest<User> {
     private UserDtoOpsImpl entityOps;
     @Autowired
     private RoleDtoOpsImpl associationOps;
+
+    @Autowired
+    protected ITestAuthenticator auth;
+
+    @Autowired
+    protected IMarshaller marshaller;
 
     public UserLogicRestLiveTest() {
         super(User.class);
@@ -96,6 +109,25 @@ public class UserLogicRestLiveTest extends UmLogicRestLiveTest<User> {
         assertThat(response.getStatusCode(), is(201));
     }
 
+    /**
+     * long running creation user
+     */
+    @Test
+    public void whenCreateUserAsyncUsingCallable_thenCreatedWithDelay() {
+        String api = getApi().getUri() + "/callable";
+        System.out.println("---> " + api);
+
+        final Role existingAssociation = getAssociationAPI().create(getAssociationEntityOps().createNewResource());
+        final User newResource = getEntityOps().createNewResource();
+        newResource.getRoles().add(existingAssociation);
+
+        Response response = createRandomUser(newResource).post(api);
+
+        assertEquals(201, response.getStatusCode());
+        assertNotNull(response.jsonPath().get("name"));
+        assertTrue(response.time() > AsyncService.DELAY);
+    }
+
     // TODO: sort
 
     @Test
@@ -129,6 +161,15 @@ public class UserLogicRestLiveTest extends UmLogicRestLiveTest<User> {
         final User resource1ViewOfServerAfter = getApi().findOne(parentWithChild.getId());
         assertThat(resource1ViewOfServerAfter.getRoles(), hasItem(child));
     }
+
+    //
+
+    private RequestSpecification createRandomUser(User newResource) {
+        //return RestAssured.given().auth().basic(Um.ADMIN_EMAIL, Um.ADMIN_PASS).contentType(MediaType.APPLICATION_JSON_VALUE).body(getEntityOps().createNewResource());
+        String resourceAsString = marshaller.encode(newResource);
+        return givenReadAuthenticated().contentType(MediaType.APPLICATION_JSON_VALUE).body(resourceAsString);
+    }
+
 
     // template methods
 

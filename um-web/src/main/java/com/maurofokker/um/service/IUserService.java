@@ -7,4 +7,6 @@ public interface IUserService extends IService<User> {
 
     //UserDto getCurrentUser();
 
+    User createSlow(final User user);
+
 }

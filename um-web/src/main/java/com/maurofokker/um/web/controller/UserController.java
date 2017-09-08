@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @Controller
 @RequestMapping(value = UmMappings.USERS)
@@ -102,6 +103,22 @@ public class UserController extends AbstractController<User> implements ISorting
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid final User resource, final UriComponentsBuilder uriBuilder, final HttpServletResponse response) {
         createInternal(resource, uriBuilder, response);
+    }
+
+    /**
+     * This will keep client thread blocked but container thread not
+     *
+     */
+    @RequestMapping(value = "/callable", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Callable<User> createUserWithCallable(@RequestBody @Valid final User resource) {
+        return new Callable<User>() {
+
+            @Override
+            public User call() throws Exception {
+                return service.createSlow(resource);
+            }
+        };
     }
 
     // update
