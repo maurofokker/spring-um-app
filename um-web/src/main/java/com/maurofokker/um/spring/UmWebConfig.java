@@ -2,6 +2,7 @@ package com.maurofokker.um.spring;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.maurofokker.um.web.KryoHttpMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.http.converter.json.AbstractJackson2HttpMessageConver
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -25,10 +27,10 @@ import java.util.Optional;
 
 @Configuration
 @ComponentScan({ "com.maurofokker.um.web", "com.maurofokker.common.web" })
-@EnableWebMvc
+// @EnableWebMvc // in ordet to extend and use krio we need to remove it and extend WebMvcConfigurationSupport
 @EnableSwagger2
 @EnableAspectJAutoProxy
-public class UmWebConfig extends WebMvcConfigurerAdapter {
+public class UmWebConfig extends WebMvcConfigurationSupport {
     /***
      * Notes:
      * - Extends WebMvcConfigurerAdapter basically allows us to hook into the web configuration of Spring and start making changes
@@ -44,6 +46,7 @@ public class UmWebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void extendMessageConverters(final List<HttpMessageConverter<?>> converters) {
 
+        /*
         // find jackson converter for marshalling and unmarshalling
 
         Optional<HttpMessageConverter<?>> jsonConverterFound = converters.stream()
@@ -63,6 +66,10 @@ public class UmWebConfig extends WebMvcConfigurerAdapter {
             converter.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT); // pretty print output
             converter.getObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); // not accept unknown props
         }
+        */
+        // add the Kryo message converter
+        converters.add(new KryoHttpMessageConverter());
+        super.addDefaultHttpMessageConverters(converters); // this allows to have others converters json xml
     }
 
     /*
@@ -91,6 +98,18 @@ public class UmWebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+
+    /**
+     * add the Kryo message converter
+     * @param messageConverters
+     */
+    /*
+    @Override
+    public void configureMessageConverters(final List<HttpMessageConverter<?>> messageConverters) {
+        messageConverters.add(new KryoHttpMessageConverter());
+        super.addDefaultHttpMessageConverters(messageConverters);
+    }
+    */
 
     /*
     Config Option 2
