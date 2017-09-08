@@ -146,6 +146,36 @@ public class UserLogicRestLiveTest extends UmLogicRestLiveTest<User> {
         assertTrue(response.time() > AsyncService.DELAY);
     }
 
+    @Ignore // need to fix
+    @Test
+    public void whenCreateUserAsync_thenAccepted() throws InterruptedException {
+
+        String api = getApi().getUri() + "/async";
+        System.out.println("---> " + api);
+
+        final Role existingAssociation = getAssociationAPI().create(getAssociationEntityOps().createNewResource());
+        final User newResource = getEntityOps().createNewResource();
+        newResource.getRoles().add(existingAssociation);
+
+        Response response = createRandomUser(newResource).post(api);
+        //Response response = createRandomUser().post(getApi().getUri() + "/async");
+
+        assertEquals(202, response.getStatusCode());
+        assertTrue(response.time() < AsyncService.DELAY);
+        String loc = response.getHeader("Location");
+        assertNotNull(loc);
+
+        // Get to know if resource is created (status)
+        Response checkLocResponse = getApi().givenReadAuthenticated().get(loc);
+        assertTrue(checkLocResponse.getStatusCode() == 200);
+        assertTrue(checkLocResponse.asString().contains("In Progress"));
+
+        Thread.sleep(AsyncService.DELAY);
+        Response finalLocResponse = getApi().givenReadAuthenticated().get(loc);
+        assertEquals(200, finalLocResponse.getStatusCode());
+        assertTrue(finalLocResponse.asString().contains("Ready"));
+    }
+
     // TODO: sort
 
     @Test

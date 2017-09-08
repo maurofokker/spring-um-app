@@ -143,6 +143,18 @@ public class UserController extends AbstractController<User> implements ISorting
         return result;
     }
 
+    /**
+     * trigger async operation in the service layer, and this will be executed in different thread
+     * it return to client SC 202 Accepted along with Location header, this is the necessary information for client to send a GET req and verify status of this operation
+     */
+    @RequestMapping(value = "/async", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void createUserWithAsync(@RequestBody final User resource, HttpServletResponse response, UriComponentsBuilder uriBuilder) throws InterruptedException {
+        asyncService.createUserAsync(resource);
+        final String location = uriBuilder.path("/users").queryParam("name", resource.getName()).build().encode().toString();
+        response.setHeader("Location", location);
+    }
+
     // update
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

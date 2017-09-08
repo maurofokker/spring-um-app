@@ -69,3 +69,38 @@ public void scheduleCreateUser(User resource, DeferredResult<User> deferredResul
 * Truly async implementation
 * Client thread is not blocked
 * Container thread is not blocked
+
+```java
+@RequestMapping(value = "/async", method = RequestMethod.POST)
+@ResponseStatus(HttpStatus.ACCEPTED)
+public void createUserWithAsync(@RequestBody final User resource, HttpServletResponse response, UriComponentsBuilder uriBuilder) throws InterruptedException {
+    asyncService.createUserAsync(resource);
+    final String location = uriBuilder.path("/users").queryParam("name", resource.getName()).build().encode().toString();
+    response.setHeader("Location", location);
+}
+```
+* Break it down api hit:
+    1. trigger async operation in the service layer, and this will be executed in different thread
+    2. it return to client SC 202 Accepted along with Location header, this is the necessary information for client to send a GET req and verify status of this operation
+
+* Service that control processing
+```java
+/**
+ * First set status to in progress and create the resource
+ * Resource is created before Sleep bc we want client to know request is being processing and not get a 404 SC
+ * Long running processing is done by Thread.sleep 10 seconds in this example
+ * After long running is finish set status to ready and then update resource in persistence
+ */
+@Async
+public Future<User> createUserAsync(User resource) throws InterruptedException {
+    resource.setStatus("In Progress");
+
+    final User result = userService.create(resource);
+    Thread.sleep(AsyncService.DELAY);
+
+    result.setStatus("Ready");
+
+    userService.update(result);
+    return new AsyncResult<User>(result);
+}
+```

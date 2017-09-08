@@ -34,6 +34,8 @@ public class User implements INameableEntity, INameableDto {
     @JoinTable(joinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID") })
     private Set<Role> roles;
 
+    private String status;
+
     // @formatter:on
     public User() {
         super();
@@ -109,6 +111,14 @@ public class User implements INameableEntity, INameableDto {
 
     public void setLocked(final Boolean lockedToSet) {
         locked = lockedToSet;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     //
